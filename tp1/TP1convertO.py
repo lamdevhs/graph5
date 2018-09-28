@@ -32,7 +32,7 @@ def test():
     M = listToMatrix(G)
     affMat(M)
   test_listToMatrix(G1)
-  print("test areteToList:",
+  print("test arcToList:",
     "allok" if arcsToList(5, aG1) == G1 else "error")
   
 test()

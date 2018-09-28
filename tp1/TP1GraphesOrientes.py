@@ -1,6 +1,6 @@
 from vect import *
 
-# graphe ou multigraphe non orienté par liste d'adjacence
+# graphes simples orientés par liste d'adjacence
 
 def newGraph(size):
   return initVectList(size + 1)
@@ -13,14 +13,18 @@ def nbSommets(G):
 
 def nbArcs(G):
   return sum(map(len, G))
-  # r = 0
-  # for i in sommets(G):
-  #   for j in G[i]:
-  #       r += 1
-  # return r
 
+# cette fonction tient compte du fait que le contexte
+# n'autorise que les graphes orientes simples
+# en consequence, la fonction refuse d'ajouter un arc deja
+# preexistant, et retourne False dans ce cas-la (True dans le
+# cas contraire).
 def ajoutArc(G, i, j):
-  G[i].append(j)
+  if j in G[i]:
+    return False
+  else:
+    G[i].append(j)
+    return True
 
 def enleveArc(G,i,j):
   G[i] = enleveUn(G[i],j)
@@ -76,6 +80,7 @@ if __name__ == "__main__":
     print("nbarcs =", nbArcs(G))
     print("degreS(G)", degreS(G))
     print("degreE(G)", degreE(G))
+    print("ajout d'un arc preexistant (5,4):", ajoutArc(G, 5,4), G)
     enleveArc(G, 5,4)
     print(G)
     enleveArc(G, 5,2)
