@@ -18,7 +18,14 @@ def areteToList(n, L):
   return G
 
 def matToList(M):
-  for
+  n = len(M)
+  G = newGraph(n)
+  for i in range(0,n):
+    for j in range(i,n):
+      for k in range(0, M[i][j]):
+        ajoutArete(G, i+1, j+1)
+  return G
+      
 
 def nonOriente(M):
   for i in range(len(M)):
