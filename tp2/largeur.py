@@ -2,21 +2,31 @@
 NotDone = Object()
 Done = Object()
 
-def largeur(G, i, Visite, traite, revisite):
+# revisite(sommet, pere, ancetre)
+
+def largeur(G, i, Visite, premiere_visite, revisite):
   n = sommets(G)
-  if Visite[i] != NotDone:
-    return
+  ordreVisite = []
+  if Visite[i] == Done:
+    return ordreVisite
   Visite[i] = Done
-  revisite(i, i, i)
   File = [i]
   while len(File) != 0:
     head = File.pop(0)
-    traite(head)
+    premiere_visite(head)
     for j in G[head]:
       if Visite[j] == Done:
         revisite(j, head, i)
-      File.append(j)
+      else:
+        File.append(j)
+        ordreVisite.append(j)
+        Visite[j] = Done
+  return ordreVisite
 
+def doNothing():
+  pass
+
+G1 = [[],[5],[1,4],[2],[3],[2,4]]
 
 
     
