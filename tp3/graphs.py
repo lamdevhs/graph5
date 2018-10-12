@@ -1,6 +1,6 @@
 from TP1GraphesNonOrientes import kuratowski
 
-# graphes non orientes
+# ===============  graphes non orientes
 G2 = [[],[2,5,5], [1,3,4,4], [2,3,4], [2,2,3,5], [1,1,4]]
 aG2 = [[1,2],[1,5],[1,5],[2,3],[2,4],[2,4],[3,3],[3,4],[4,5]]
   # ^ G2 sous forme de listes d'aretes
@@ -14,7 +14,17 @@ Petersen = [[],
   [2,5,6],[1,3,7],[2,4,8],[3,5,9],[1,4,10],
   [1,8,9],[2,9,10],[3,6,10],[4,6,7],[5,7,8]]
 
-# graphes orientes
+  # ==== graphes non cycliques
+noWheels1 = [[], [2], [1,3,4,5], [2,7,6], [2], [2], [3], [3]]
+noWheels2 = [[], [2], [1,3,4,5], [2,7,6], [2], [2], [3], [3]]
+  # ==== graphes cycliques
+wheels1 = [[], [2], [1,3,4,5], [2,7,6], [2], [2], [3, 7], [3, 6]]
+wheels2 = [[], [2], [1,3,4,5], [2,7,6], [2], [2], [3], [3],
+  [9, 10], [8,10], [8,9]]
+  # ^ celui-la n'est pas connexe
+
+
+# ===============  graphes orientes
 oG1 = [[],[5], [1,4], [2], [3], [2,4]]
 G1a = [[1,5], [2,1], [2,4], [3,2], [4,3], [5,2], [5,4]]
   # ^ G1 sous forme de listes d'aretes
