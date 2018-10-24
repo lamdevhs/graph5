@@ -1,0 +1,139 @@
+\input{/mnt/lab/cs/latex/format/article-spread.tex}
+
+\input{/mnt/lab/cs/latex/base.tex}
+\input{/mnt/lab/cs/latex/macros.tex}
+
+\input{/mnt/lab/cs/latex/math/base.tex}
+\input{/mnt/lab/cs/latex/math/macros.tex}
+
+
+\title{Théorie et Algorithmique des Graphes}
+\author{Thierry Montaut}
+\date{2018}
+
+\begin{document} \maketitle
+    \defiz{Graphe Non Orienté}{
+        Un couple $(X,E)$ où $X$ est un ensemble fini d'éléments appelés sommets et $E$ un ensemble de doubletons $\{x,y\}$ de deux éléments de $X$. Les éléments de $E$ sont appelés arêtes. \medskip
+        
+        Parfois on autorise des arêtes de la forme $\{x,x\}$, appelées boucles, ou encore on autorise la même arête à apparaître plusieurs fois dans $E$. On parle alors de multigraphe. Dans le cas contraire on dit que le graphe est simple.
+    }
+    \defiz{Graphe Orienté}{
+        Un couple $(X,E)$ où $X$ est un ensemble fini d'éléments appelés sommets et $E$ un ensemble de 2-uples $(x,y)$ de deux éléments de $X$. Les éléments de $E$ sont appelés arcs. \medskip
+        
+        Si $E$ contient des éléments de la forme $(x,x)$, ou bien contient plus d'une fois le même arc, on parle de multigraphe orienté. Dans le cas contraire on parle de graphe orienté simple. En particulier, un graphe simple peut très bien contenir les deux arêtes $(x,y)$ et $(y,x)$, pour $x \neq y$.
+    }
+    \sect{
+        Dans ce cours on aura systématiquement $X = \{1,\dots,n\}$ pour un certain $n \in \N\sun$.
+    }
+    \defiz{Ordre d'un Graphe}{
+        Le nombre de ses sommets. Notation : $\abs X$ l'ordre du graphe $G = (X,E)$. Systématiquement $n$ désignera l'ordre de $G$, et $m$ le nombre d'arêtes ou d'arcs, soit $\abs E$.
+    }
+    \defiz{Orientation d'un GNO}{
+        Un graphe orienté $G_0 = (X_0, E_0)$ est une orientation du graphe non orienté $G = (X,E)$ si $X = X_0$ et si on peut trouver une bijection de $E$ dans $E_0$ qui à toute arête $\{x,y\}$ de $E$, associe un unique arc de la forme $(x,y)$ ou $(y,x)$, dans $E_0$.
+    }
+    \defiz{GO Inverse}{
+        Soit $G = (X,E)$ un graphe orienté, et $\sig$ l'application de $X^2$ dans $X^2$ qui à $(x,y)$ associe $(y,x)$. Alors le graphe inverse de $G$ est le graphe défini par :
+        $$ G' = (X, E' = \{ \sig(a) \telq a \in E \})$$
+    }
+    \defiz{Graphe Planaire}{
+        Lorsque le graphe admet une représentation sagittale sans qu'aucune arête ne se croise.
+    }
+    \defiz{$GNO$ : Voisinage, degré}{\hfill
+        \mathL
+            \item $x,y \in X$ sont adjacents lorsque $\{x,y\} = \{y,x\} \in E$. $x$ et $y$ sont appelées les extrémités de cette arête.
+            \item Le voisinage de $x \in X$ est l'ensemble $V(x)$ de ses sommets adjacents (avec multiplicité).
+            \item Le degré de $x$ est le nombre d'arêtes incidentes à $x$, ou encore c'est le nombre $d(x) := \abs{V(x)}$.
+            \item Si $d(x) = 0$ on dit que $x$ est isolé. Si $d(x) = 1$ on dit qu'il est pendant.
+        \endL
+    }
+    \defiz{$GO$ : Voisinage, degré}{\hfill
+        \mathL
+            \item $x,y \in X$ sont adjacents lorsque $(x,y) \in E$. $x$ est l'origine de cette arc, $y$ son extrémité. $x$ est un prédécesseur de $y$ et $y$ un successeur de $x$.
+            \item Le voisinage sortant de $x \in X$ est l'ensemble $V^+(x)$ de ses successeurs (avec multiplicité). De même $V^-(x)$ est l'ensemble de ses prédécesseurs, ou encore le voisinage entrant de $x$.
+            \item Le degré sortant (respectivement entrant) de $x$ est le nombre de ses successeurs (respectivement prédécesseurs), c'est-à-dire $d^+(x) := \abs{V^+(x)}$ (respectivement $d^-(x) := \abs{V^-(x)}$).
+            \item Si $d^+(x) = 0$ on dit que $x$ est un puits. Si $d^-(x) = 0$ on dit que c'est une source.
+            \item Si $d^-(x) = 1$ et $x$ est un puits, on dit qu'il est pendant.
+        \endL
+    }
+    \defiz{GNO Complet}{
+        $G = (X,E) \in GNO$ est complet lorsque
+        $$ E = \{ \{x,y\} \telq x \neq y\}$$
+        C'est exactement le GNO simple maximal au sens du nombre d'arêtes $m$, à ordre fixé $n$. On les notera $K_n$. $K_5$ est le plus petit graphe complet non planaire.
+    }
+    \defiz{$GNO$ $k$-parti}{
+        $G=(X,E)$ est $k$-parti s'il existe un partition propre (ne contenant pas $\varnothing$) $\{X_1,\dots,X_k\}$ de $X$ tel que :
+        $$\forall x \in X_i, \quad \forall y \in X_j, \quad \{x,y\} \in E \implies i \neq j$$
+        On parle de graphe multiparti quelle que soit la valeur de $k$. Pour $k = 2,3$ on parle de graphe biparti, triparti.
+    }
+    \defiz{$GNO$ biparti complet}{
+        de taille $n$ et $p$ : un graphe $G$ biparti tel que $\abs {X_1} = n$ et $\abs {X_2} = p$, $X = X_1 \uplus X_2$ et $E = X_1 \times X_2$. On le note $K_{n,p}$.
+    }
+    \propz{GNO simple, bases}{  Soit $G \in GNO$, simple, à $n$ sommets et $m$ arêtes.
+        \mathL
+            \item Si $G = K_n, \quad m = \dfrac {n(n-1)} 2 = O(n^2)$
+            \item D'où $m \leq \dfrac {n(n-1)} 2$ dans le cas général, par suite $m \leq O(n^2)$
+            \item $\DS \sum_{x \in X} d(x)$ est le nombre d'extrémités d'arêtes, il vaut donc $2m$, c'est donc un nombre pair
+            \item Il y a un nombre pair de sommets de degré impair
+        \endL
+    }
+    \preuvez{dernier point}{
+        Notons $X_i$ pour $i = 0,1$ les ensembles :
+        $$X_i = \{ x \in X \telq d(x) \equiv_2 i \}$$
+        Il faut montrer que $\abs {X_1} \in 2\Z$. On a :
+        $$2\Z \ni 2m = \sum_{x \in X_0}d(x) + \sum_{x \in X_1} d(x)$$
+        La première somme est composée d'éléments pairs, la seconde d'éléments impairs. La seconde somme doit donc avoir une valeur paire, ce qui implique que le nombre de ses éléments (qui sont tous impairs), à savoir le cardinal de $X_1$, doit être pair. D'où $\abs{X_1} \in 2\Z$.
+    }
+    \propz{GNO simple}{
+        Tout graphe non orienté \emph{simple} admet deux sommets de même degré.
+    }
+    \preuve{
+        Soit $G = (X,E) \in GNO$ simple, dont tous les sommets ont des degrés différents $D :=\{d_1,\dots, d_n\}$ rangés par ordre croissant. C'est une partie de $\N$ à $n$ éléments. De plus $G$ est simple donc aucun degré ne peut dépasser $n-1$. Par suite, $D \subseteq \{0,\dots, n-1\}$. On en déduit l'égalité par comparaison des cardinaux. Soit $x$ l'unique sommet de $G$ de degré $d_n$. Comme $G$ est simple,
+            $$d_n = n - 1 \iff V(x) = X \backslash \{x\}$$
+        ce qui implique que tout élément autre que $x$ est adjacent à $x$, d'où aucun élément de $G$ n'est isolé. Par suite $0 \notin D = \{0,\dots,n-1\}$ : contradiction.
+    }
+    \remark{
+        Un multigraphe n'a pas cette propriété, il suffit de voir
+        $$G = (\{1,2,3\},\{\{2,3\},\{2,3\}, \{3,1\}\})$$
+        et pour tout sommet $i$, $d(i) = i$.
+    }
+    \propz{GO simple, bases}{
+        Soit $G \in GO$ simple, à $n$ sommets et $m$ arcs.
+        \mathL
+            \item $m \leq n(n-1) = O(n^2)$ : un graphe orienté simple peut contenir deux fois plus d'arcs que le nombre d'arêtes d'un graphe non orienté simple de même ordre : deux arcs $(x,y)$ et $(y,x)$ pour chaque arête $\{x, y\}$ de $K_n$.
+            \item $\DS \sum_{x \in X} d^+(x) = \sum_{x \in X} d^-(x)$ est le nombre d'origines ou d'extrémités d'arcs, donc le nombre d'arcs, donc égal à $m$.
+        \endL
+    }
+    \defiz{Graphe Partiel}{
+        $G = (X,E)$ est un graphe partiel de $G' = (X,E')$ si $E \subseteq E'$. L'ordre d'un graphe et d'un de ses graphes partiels est en particulier toujours identique.
+    }
+    \defiz{Sous-Graphe}{
+        $G = (X,E)$ est un sous-graphe de $G' = (X',E')$ si $X \subseteq X'$ et $E = E' \cap (X \times X)$. $G$ est un graphe issu de $G'$ auquel on aurait retiré des sommets, et toutes les arêtes ou arcs qui les concernaient.
+    }
+    \defiz{$GNO$, Clique}{
+        Une $k$-clique de $G \in GNO$ est un sous-graphe complet de $G$ d'ordre $k$.
+    }
+    \defiz{$GNO$, Chaînes}{
+        Une chaîne de $G$ est une suite alternée de sommets et d'arêtes de $G$. Dans le cas d'un graphe simple on peut juste lister les sommets visités par la chaîne :
+        $$ c = (x_0,\dots,x_n)$$
+        $$ c = x_0 -\dots - x_n$$
+    }
+    \defiz{$GNO$, Connexité}{
+        \mathL
+        \item Pour $x,y \in X$, on dit que $y$ est accessible à partir de $x$ dans $G$ s'il existe une chaîne de $G$ joignant $x$ à $y$. $(x)$ est une chaîne valide de longueur nulle joignant $x$ à lui-même.
+        \item $G$ est dit connexe si pour tout $x,y \in X$, $y$ est accessible à partir de $x$.
+        \item L'accessibilité est une relation d'équivalence sur $X$. Les classes d'équivalence sont appelées les \emph{composantes connexes} de $G$.
+        \endL
+    }
+    \defiz{$GNO$, Chaîne simple et élémentaire, Cycle}{
+        Une chaîne est simple si elle ne passe pas deux fois par la même arête, et élémentaire si elle ne passe pas deux fois par le même sommet. Toute chaîne élémentaire est donc simple. \medskip
+        
+        On appelle cycle une chaîne \emph{simple} dont l'origine et l'extrémité coïncident. En particulier la chaîne $(1,2,1)$ dans $K_2$ n'est pas simple, donc n'est pas un cycle.
+    }
+    \propz{Chaînes, bases}{
+        \mathL
+            \item Toute chaîne élémentaire qui n'est pas un cycle est de longueur inférieure ou égale à $n - 1$
+            \item Tout cycle élémentaire a une longueur inférieure ou égale à $n$.
+            \item De toute chaîne, on peut extraire une chaîne élémentaire en gardant les mêmes extrémités.
+        \endL
+    }
+\end{document}
