@@ -5,6 +5,7 @@
 
 \input{/mnt/lab/cs/latex/math/base.tex}
 \input{/mnt/lab/cs/latex/math/macros.tex}
+\input{/mnt/lab/cs/latex/math/clean-sections.tex}
 
 
 \title{Théorie et Algorithmique des Graphes}
@@ -129,11 +130,57 @@
         
         On appelle cycle une chaîne \emph{simple} dont l'origine et l'extrémité coïncident. En particulier la chaîne $(1,2,1)$ dans $K_2$ n'est pas simple, donc n'est pas un cycle.
     }
-    \propz{Chaînes, bases}{
+    \propz{$GNO$, Chaînes, bases}{\hfill
         \mathL
-            \item Toute chaîne élémentaire qui n'est pas un cycle est de longueur inférieure ou égale à $n - 1$
-            \item Tout cycle élémentaire a une longueur inférieure ou égale à $n$.
-            \item De toute chaîne, on peut extraire une chaîne élémentaire en gardant les mêmes extrémités.
+            \item Toute chaîne élémentaire qui n'est \emph{pas} un cycle est de longueur inférieure ou égale à $n - 1$. La plus grande chaîne élémentaire non cyclique est celle passant par tous les sommets du graphe ; elle contient exactement $n - 1$ arêtes.
+            \item Tout cycle élémentaire a une longueur inférieure ou égale à $n$. Le plus grand cycle est celui passant par tous les sommets du graphe.
+            \item De toute chaîne, on peut extraire une chaîne élémentaire en gardant les mêmes extrémités : on peut retirer de la chaîne tous les morceaux partant et finissant sur un même sommet, jusqu'à épuisement.
         \endL
+    }
+    \defiz{$GO$, Chemins}{
+        Une chaîne de $G$ est une suite alternée de sommets et d'arcs de $G$. Dans le cas d'un graphe simple on peut juste lister les sommets visités par la chaîne :
+        $$ c = (x_0,\dots,x_n)$$
+        $$ c = x_0 \to\dots \to x_n$$
+    }
+    \defiz{$GO$, Forte Connexité}{
+        \mathL
+        \item Pour $x,y \in X$, on dit que $y$ est accessible à partir de $x$ dans $G$ s'il existe une chemin de $G$ joignant $x$ à $y$. $(x)$ est un chemin valide de longueur nulle joignant $x$ à lui-même.
+        \item $G$ est dit fortement connexe si pour tout $x,y \in X$, $y$ est accessible à partir de $x$.
+        \item L'accessibilité réciproque ($x$ accessible à partir de $y$ \emph{et vice-versa}) est une relation d'équivalence sur $X$. Les classes d'équivalence sont appelées les \emph{composantes fortement connexes} de $G$.
+        \endL
+    }
+    \defiz{$GO$, Chemin élémentaire, Circuit}{
+        Un chemin est élémentaire lorsqu'il ne passe pas deux fois par le même sommet.
+        
+        Un circuit est un chemin dont l'origine est égale à l'extrémité :
+        $$x \to x_1 \to \dots \to x_{n-1} \to x$$
+        
+        On autorise dans le cas $GO$ le circuit $(x,y,x)$ car $(x,y) \neq (y,x)$.
+    }
+    \propz{$GO$, Chemins --- propriétés}{\hfill
+        \mathL
+            \item De tout chemin, on peut extraire un chemin élémentaire en gardant les mêmes extrémités : on peut retirer du chemin tous les morceaux partant et finissant sur un même sommet, jusqu'à épuisement.
+        \endL
+    }
+    \defiz{$GNO$, Arbres}{
+        $G \in GNO$ est une union d'arbres \ssi il est sans cycle. En particulier, $G$ est nécessairement simple.
+        
+        Les composantes connexes de $G$ sont appelés des arbres. On dit que $G$ est un arbre si c'est une union d'arbres ne content qu'un arbre : donc si $G$ est sans cycle \emph{et} connexe. 
+    }
+    \theoz{$GNO$, Caractérisation des Arbres}{
+        Soit $T = (X, E) \in GNO$, d'ordre fixé $n$. Les assertions suivantes sont équivalentes :
+        \mathL
+        \item $T$ est un arbre
+        \item $T$ est connexe et $m = n-1$
+        \item $T$ est sans cycle et $m = n-1$ $(???)$
+        \item $T$ est le graphe sans cycle tel que $m$ soit maximal : ajouter la moindre arête produit un cycle automatiquement.
+        \item $T$ est le graphe connexe tel que $m$ soit minimal : retirer la moindre arête rend $T$ non connexe automatiquement.
+        \item Pour $x,y \in X$ quelconques, il existe un unique chemin reliant $x$ à $y$ dans $T$ --- l'existence fait que $T$ est connexe, l'unicité fait que $T$ est sans cycles.
+        \endL
+    }
+    \defiz{$GO$, Arborescence}{
+        Un arbre est dit enraciné lorsqu'on a choisi un de ses sommets pour racine.
+        
+        Une arborescence est une orientation d'un arbre enraciné où tous les sommets sont accessibles à partir de la racine : on oriente les arêtes dans la direction \og opposée \fg{} à la racine.
     }
 \end{document}
