@@ -141,3 +141,44 @@ print(Kruskal2(8,Gcours))
 
 
 
+def updateDist(G,M, Dist, Min, i):
+  Dist[i] = 0 # on ajoute I a T
+  for j in G[i]:
+    w = M[i-1][j-1]
+    d = Dist[j]
+    if d == -1 or d > w:
+      Dist[j] = w
+      Min[j] = i
+
+def getMin(Dist):
+  m = -1 # ici represente l'infini
+  i = -1
+  for k in range(len(Dist)):
+    v = Dist[k]
+    if v > 0 and (m > v or m == -1):
+      m = v
+      i = k
+  return i, m
+
+def Primm(n,L):
+  G, M = areteToListe(n,L)
+  Dist = initVect(len(G), -1)
+  Min = initVect(len(G), 1)
+  T = initVectList(len(G))
+  poids = 0
+  updateDist(G, M, Dist, Min, 1)
+  nbAretes = 0
+  #print(nbAretes,Dist, Min)
+  while nbAretes != n - 1:
+    k, w = getMin(Dist)
+    #print(k,w)
+    poids += w
+    s = Min[k]
+    T[s].append(k)
+    T[k].append(s)
+    updateDist(G, M, Dist, Min, k)
+    nbAretes += 1
+    #print(nbAretes,Dist, Min)
+  return T, poids
+
+print(Primm(6, ListAretes))
