@@ -26,18 +26,18 @@ Un élément $y \in Y$ et dit compatible avec un élément $x \in X$ si $y \in \
 On définit alors une de solution au problème de la manière suivante :
 \SEP\jdefi On appelle \emph{couplage} pour le problème de couplage $P = (X,Y,\phi)$ toute application $f : A \subseteq X \to Y$ qui soit injective, et qui respecte $\phi$ dans le sens que :
 \[ \forall x \in A, \quad f(x) \in \phi(x) \]
-De façon équivalente, on peut dire que le graphe de $f$ (au sens d'un graphe d'application) est inclus dans $E$.
+De façon équivalente, cela signifie que le graphe de $f$ (au sens d'un graphe d'application) est inclus dans $E$.
 
 On appelle \emph{couplage parfait} un couplage $f$ dont l'ensemble de définition soit $X$ tout entier. L'existence d'un couplage parfait entraîne évidemment que nécessairement $\abs X \leq \abs Y$. En particulier, si l'on suppose dès le départ que, dans $P$,  $\abs X \geq \abs Y$, alors un couplage parfait pour $P$ est simplement bijection entre $X$ et $Y$ dont le graphe d'application soit inclus dans $E$.
 
-On appelle \emph{couplage maximal} pour le problème $P$, tout couplage $f$ de $P$ tel que pour tout autre couplage $g$, $\abs{\Img f} \geq \abs{\Img g}$. Dit autrement, puisque $f$ et $g$ sont injectives, $f$ est un couplage maximal s'il n'existe pas de couplage $g$ de $P$ dont l'ensemble de définition soit plus grand (en cardinal) que l'ensemble de définition de $f$. On peut aussi le formuler en disant que $f$ est maximal au sens du cardinal de son graphe d'application $\Gam_f = \set{(x,f(x)) \pour x \in A}$.
+On appelle \emph{couplage maximum} pour le problème $P$, tout couplage $f$ de $P$ tel que pour tout autre couplage $g$, $\abs{\Img f} \geq \abs{\Img g}$. Dit autrement, puisque $f$ et $g$ sont injectives, $f$ est un couplage maximum s'il n'existe pas de couplage $g$ de $P$ dont l'ensemble de définition soit plus grand (en cardinal) que l'ensemble de définition de $f$. On peut aussi le formuler en disant que $f$ est maximum au sens du cardinal de son graphe d'application $\Gam_f = \set{(x,f(x)) \pour x \in A}$.
 
-On appellera \emph{ordre} d'un couplage $f : A \subseteq X \to Y$, l'entier $\abs A$. Un couplage maximal est donc en particulier un couplage maximal au sens de l'ordre.
+On appellera \emph{ordre} d'un couplage $f : A \subseteq X \to Y$, l'entier $\abs A$. Un couplage maximum est donc en particulier un couplage maximal au sens de l'ordre.
 
-On dira qu'un problème de couplage $P$ est \emph{régulier} lorsque $\abs X = \abs Y$.
+On dira finalement qu'un problème de couplage $P$ est \emph{régulier} lorsque $\abs X = \abs Y$.
 \SEP
 
-Tout couplage parfait est bien sûr maximal, mais la réciproque n'est à priori pas vraie. Le Théorème de Hall donne une condition nécessaire et suffisante sur $P$ pour qu'il admette un couplage parfait. Avant de l'énoncer et de le prouver, on aura besoin de la définition suivante.
+Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori pas vraie. Le Théorème de Hall donne une condition nécessaire et suffisante sur $P$ pour qu'il admette un couplage parfait. Avant de l'énoncer et de le prouver, on aura besoin de la définition suivante.
 \SEP\jdefi Soit $\phi : X \to \P (Y)$ une application quelconque, $X$ et $Y$ étant des ensembles quelconques. On dira que $\gam : X \to \P (Y)$ est incluse dans $\phi$ si
 \[ \forall x \in X, \gam(x) \subseteq \phi(x) \]
 On notera alors $\gam \subseteq \phi$.
@@ -104,7 +104,7 @@ On notera alors $\gam \subseteq \phi$.
  
  Pour des cardinaux de $X$ et $Y$ pas forcément égaux, tout ce que l'on peut dire c'est qu'à tout couplage $f$ de $P$, on peut associer un couplage $f'$ de $P\-$ de même ordre, en vertu qu'une injection $f : A \subseteq X \to Y$ est aussi une bijection $g : A \to \Img f \subseteq Y$, et donc $g\- = f'$ est une injection de $\Img f \subseteq Y$ dans $X$, donc un couplage pour $P\-$, et l'ordre de $f'$ est $\abs{\Img f} = \abs A$, qui est aussi l'ordre de $f$.
  
- Par suite, on en déduit tout de même le fait important que tout couplage maximal de $P$ entraîne l'existence d'un couplage maximal de $P\-$ de même ordre, et ce, que $P$ soit régulier ou non.
+ Par suite, on en déduit tout de même le fait important que tout couplage maximum de $P$ entraîne l'existence d'un couplage maximum de $P\-$ de même ordre, et ce, que $P$ soit régulier ou non.
  
  \section{Modélisation par un Graphe}
  
@@ -113,21 +113,23 @@ On notera alors $\gam \subseteq \phi$.
  \SEP\jdefi On appelle \emph{graphe du problème de couplage} $P = (X,Y,\phi)$, le graphe non orienté, simple, biparti $G := (V, E)$, avec $V := X \cup Y$ (on supposera ici $X$ et $Y$ disjoints) et
  \[ E := \set{ \set{x,y} \in X \times Y \telk y \in \phi(x) }\]
  
- Un \emph{couplage} du graphe $G$ correspondra à un sous-ensemble $M \subseteq E$ tel qu'il existe un couplage $f : A \subseteq X \to Y$ de $P$, tel que le graphe d'application $\Gam_f$ de $f$ soit $M$ (en identifiant 2-uplets et doubletons), c'est-à-dire :
+ Un \emph{couplage} du graphe $G$ correspondra à un sous-ensemble $M = \Gam_f \subseteq E$ tel qu'il existe un couplage $f : A \subseteq X \to Y$ de $P$, tel que le graphe d'application $\Gam_f$ de $f$ soit $M$ (en identifiant 2-uplets et doubletons), c'est-à-dire :
  \[ M = \Gam_f = \set{ \set{x,f(x)} \pour x \in A } \]
  
  En termes plus graphiques, du fait de l'injection de $f$, $M$ correspond à un ensemble d'arêtes de $G$ deux à deux disjoints par sommets. En particulier, chaque sommet de $G$ admet au plus un voisin dans le sous-graphe $(V, M)$.
  
  Un \emph{couplage parfait} de $G$ correspondra similairement à un ensemble $M = \Gam_f \subseteq E$ avec $f : X \to Y$ un couplage parfait pour $P$, avec la condition supplémentaire que tout sommet de $G$ soit recouvert par $M$ (et pas seulement ceux dans $X$) : cela implique que $f$ soit bijective, donc aussi que $\abs X = \abs Y$.
  
- Cette condition supplémentaire se justifie du fait que les graphes des problèmes $P$ et $P\-$ sont exactement égaux, donc tout couplage parfait de l'un doit logiquement être un couplage parfait pour l'autre, ce qui force à ce que tout couplage parfait de $P$ soit un couplage parfait de $P\-$, d'où l'égalité nécessaire des cardinaux de $X$ et de $Y$.
+ L'existence de cette condition supplémentaire se justifie du fait que les graphes des problèmes $P$ et $P\-$ sont exactement égaux, donc tout couplage parfait de l'un doit logiquement être un couplage parfait pour l'autre, ce qui force à ce que tout couplage parfait de $P$ soit un couplage parfait de $P\-$, d'où l'égalité nécessaire des cardinaux de $X$ et de $Y$.
  
- Un \emph{couplage maximal} pour $G$ correspondra à un ensemble $M \subseteq E$ avec $f :X \to Y$ un couplage maximal pour $P$. Cela correspond comme dit précédemment automatiquement à un couplage maximal pour $P\-$ de même ordre, donc ici il n'y a pas d'ambiguité par rapport à la régularité de $P$. Cela correspond aussi à un couplage $M$ pour $G$ de cardinal maximal, puisque le cardinal de $M$ est exactement l'ordre du couplage $f$ de $P$ qui lui correspond.
+ Un \emph{couplage maximum} pour $G$ correspondra à un ensemble $M = \Gam_f \subseteq E$ avec $f :X \to Y$ un couplage maximum pour $P$. Cela correspond comme dit précédemment à l'existence d'un couplage maximum $f' : \Img f \to  X $ pour $P\-$ de même ordre et de même graphe que $f$ (toujours en identifiant 2-uplets et doubletons, donc en ``oubliant'' la direction de l'injection en question), donc ici il n'y a pas d'ambiguité par rapport à la régularité de $P$.
+ 
+ Cela correspond aussi exactement à un couplage $M$ pour $G$ de cardinal maximal, puisque le cardinal de $M$ est exactement l'ordre du couplage $f$ de $P$ qui lui correspond. Un couplage maximum $M$ est donc un ensemble d'arêtes de $G$ deux à deux sommet-disjointes et qui soit maximal au sens du cardinal.
  \SEP
  
  \section{Algorithme de Hopcroft-Karp}
  
- Le problème qui consiste à trouver un couplage maximal pour un graphe biparti simple $G = (V = X \cup Y,E)$ peut être résolu en temps polynômial grâce à l'algorithme de Hopcroft–Karp. Plus exactement, la complexité dans le pire cas est en $O(m \sqrt n)$ avec $n := \abs V$ et $m := \abs E$.
+ Le problème qui consiste à trouver un couplage maximum pour un graphe biparti simple $G = (V = X \cup Y,E)$ peut être résolu en temps polynômial grâce à l'algorithme de Hopcroft–Karp. Plus exactement, la complexité dans le pire cas est en $O(m \sqrt n)$ avec $n := \abs V$ et $m := \abs E$.
  
  \subsection{L'idée}
  
@@ -144,14 +146,14 @@ On notera alors $\gam \subseteq \phi$.
  
  Par ailleurs, $M'$ contient une arête de plus que le couplage $M$. À partir du couplage trivial $M_0 = \empty$, on peut ainsi construire une suite finie $(M_0,\dots,M_s)$ de couplages de $G$ qui soit strictement croissante pour le cardinal : l'élément $M_{i+1}$ est définit comme la différence symétrique de $M_i$ avec un chemin d'augmentation pour $M_i$ dans $G$. La suite s'arête lorsqu'il ne reste plus de chemins d'augmentation à trouver pour le dernier élément de la suite.
  
- Afin de prouver que le dernier couplage $M_s$ de la suite, obtenu selon cette méthode des chemins d'augmentation, est un couplage maximal de $G$, (c'est-à-dire que pour tout autre couplage $M$ de $G$, on aurait $\abs{M_s} \geq \abs M$), nous avons le théorème suivant.
+ Afin de prouver que le dernier couplage $M_s$ de la suite, obtenu selon cette méthode des chemins d'augmentation, est un couplage maximum de $G$, (c'est-à-dire que pour tout autre couplage $M$ de $G$, on aurait $\abs{M_s} \geq \abs M$), nous avons le théorème suivant.
  
  \SEP\jtheoz{Berge 1957}
-    Un couplage $M$ est maximal si et seulement si $G$ ne contient pas de chemins d'augmentation pour $M$.
+    Un couplage $M$ est maximum si et seulement si $G$ ne contient pas de chemins d'augmentation pour $M$.
  \SEP\jpreuve
-    Comme montré précédemment, s'il existe un chemin d'augmentation $C$ pour $M$, alors $C \oplus M$ est un couplage contenant une arête de plus que $M$, ce qui implique que $M$ ne peut être maximal.
+    Comme montré précédemment, s'il existe un chemin d'augmentation $C$ pour $M$, alors $C \oplus M$ est un couplage contenant une arête de plus que $M$, ce qui implique que $M$ ne peut être maximum.
     
-    Réciproquement, supposons $M$ non maximal. Soit $M\sun$ un couplage maximal dans $G$. On doit donc avoir $c := \abs {M\sun} - \abs M > 0$. Définissons $S := M \oplus M\sun$. $S$ est composé de toutes les arêtes $S_1 := S \cap M$ de $M$ qui ne sont pas dans $M\sun$, et de toutes les arêtes $S_2 := S \cap M\sun$ de $M\sun$ qui ne sont pas dans $M$. On doit avoir $\abs{S_2} = \abs{S_1}+c$.
+    Réciproquement, supposons $M$ non maximum. Soit $M\sun$ un couplage maximum dans $G$. On doit donc avoir $c := \abs {M\sun} - \abs M > 0$. Définissons $S := M \oplus M\sun$. $S$ est composé de toutes les arêtes $S_1 := S \cap M$ de $M$ qui ne sont pas dans $M\sun$, et de toutes les arêtes $S_2 := S \cap M\sun$ de $M\sun$ qui ne sont pas dans $M$. On doit avoir $\abs{S_2} = \abs{S_1}+c$.
     
     Soit $x \in V$. Dans le sous-graphe $(V, S)$, si $x$ est l'extrémité d'une arête de $M$, alors il ne peut être l'extrémité d'une autre arête de $M$, puisque $M$ est un couplage. De la même façon, $x$ est l'extrémité d'au plus une arête de $M\sun$. Par suite, tous les sommets de $(V,S)$ sont de degré inférieurs ou égaux à 2.
     
@@ -161,14 +163,14 @@ On notera alors $\gam \subseteq \phi$.
     
     Comme $S_2$ est supposé être plus grand de cardinal que $S_1$, cela implique forcément qu'il existe dans $S$ au moins un chemin $C$ ayant plus d'arêtes dans $M\sun$ que dans $M$. Un tel chemin est alors de longueur impaire, començant et se terminant par deux arêtes de $M\sun \minus M$, donc par deux sommets libres par rapport à $M$, car si les extrémités de $C$ n'étaient pas libre pour $M$, le chemin $C$ pourrait être prolongé d'au moins une arête, et ne serait donc pas maximal (ou bien ce serait un cycle, ce qui a déjà été exclus), c'est donc précisément un chemin d'augmentation pour $M$ dans $G$, ce qui achève la preuve de la réciproque.
     
-    Précisons un point qui sera utile pour prouver le théorème qui va suivre : il n'existe aucun chemin maximal dans $S$ contenant plus d'arêtes de $M\sun$ que de $M$ : si un tel chemin existait, ce serait un chemin d'augmentation pour $M\sun$, ce qui est impossible du fait que $M\sun$ est un couplage maximal pour $G$.
+    Précisons un point qui sera utile pour prouver le théorème qui va suivre : il n'existe aucun chemin maximal dans $S$ contenant plus d'arêtes de $M\sun$ que de $M$ : si un tel chemin existait, ce serait un chemin d'augmentation pour $M\sun$, ce qui est impossible du fait que $M\sun$ est un couplage maximum pour $G$.
  \qed\SEP
  \jtheoz{Hopcroft-Karp} On reprend les hypothèses et notations du théorème précédent. Alors, il existe, dans $S = M\sun \oplus M$, exactement $c = \abs {M\sun} - \abs M > 0$ chemins d'augmentation pour $M$ qui soient deux-à-deux sommet-disjoints.
  \SEP\jpreuve
     Il suffit de voir que chaque chemin d'augmentation pour $M$ dans $S$ contient exactement une arête de plus provenant de $M\sun$, que d'arêtes provenant de $M$. Il existe donc nécessairement $c$ chemins d'augmentation disjoints dans $S$ pour justifier que $M\sun$ contienne $c$ arêtes de plus que $M$, tout cela en tenant compte que, comme montré précédemment, les chemins d'augmentation pour $M$ sont les seuls chemins maximaux de $S$ qui influent sur la différence de taille entre $M$ et $M\sun$.
  \qed \SEP
  
- Par application du théorème précédent, $M_s$ étant le dernier couplage de la suite, comme aucun chemin d'augmentation n'existe pour celui-ci, $M_s$ est donc nécessairement un couplage maximal. Cela achève la preuve de la validité de la méthode de résolution du problème de couplage maximal par chemins d'augmentation.
+ Par application du théorème précédent, $M_s$ étant le dernier couplage de la suite, comme aucun chemin d'augmentation n'existe pour celui-ci, $M_s$ est donc nécessairement un couplage maximum. Cela achève la preuve de la validité de la méthode de résolution du problème de couplage maximum par chemins d'augmentation.
  
  \subsection{L'algorithme}
  
@@ -180,7 +182,7 @@ On notera alors $\gam \subseteq \phi$.
     
     Entrée : Graphe biparti simple non orienté $G = (V,E) = (X \cup Y, E)$.
     
-    Sortie : Couplage maximal $M$ de $G$.
+    Sortie : Couplage maximum $M$ de $G$.
     \bigskip
     
     $M \leftarrow \empty$
@@ -230,14 +232,12 @@ On notera alors $\gam \subseteq \phi$.
  
  Il peut être montré qu'à chaque étape, la longueur minimale $k$ pour laquelle on puisse trouver un chemin d'augmentation, augmente d'au moins 1. Ce résultat est non trivial, on peut en trouver une preuve dans [Meena Mahajan, ``Matchings in Graphs'', 2010].
  
- Par suite, après l'étape $\sqrt n$, tous les chemins d'augmentation que l'on peut trouver seront de longueur au moins égale à $\sqrt n$. Soit $M$ le couplage obtenu à ce moment-là de l'algorithme, $M\sun$ un couplage maximal pour $G$, et $S := M \oplus M\sun$. $S$ contient entre autres un certain nombre de chemins d'augmentation de $M$ deux-à-deux sommet-disjoints (\cf le théorème de Berges), donc nécessairement tous de longeur supérieure ou égale à $\sqrt n$. Comme ils sont sommet-disjoints, chaque chemin d'augmentation passe par un peu plus de $\sqrt n$ sommets qu'il ne partage pas avec les autres chemins dans $S$, et alors il ne peut donc y avoir plus de $\sqrt n$ chemins d'augmentation dans $S$, puisque le nombre total de sommets disponibles est limité à $n$.
+ Par suite, après l'étape $\sqrt n$, tous les chemins d'augmentation que l'on peut trouver seront de longueur au moins égale à $\sqrt n$. Soit $M$ le couplage obtenu à ce moment-là de l'algorithme, $M\sun$ un couplage maximum pour $G$, et $S := M \oplus M\sun$. $S$ contient entre autres un certain nombre de chemins d'augmentation de $M$ deux-à-deux sommet-disjoints (\cf le théorème de Berges), donc nécessairement tous de longeur supérieure ou égale à $\sqrt n$. Comme ils sont sommet-disjoints, chaque chemin d'augmentation passe par un peu plus de $\sqrt n$ sommets qu'il ne partage pas avec les autres chemins dans $S$, et alors il ne peut donc y avoir plus de $\sqrt n$ chemins d'augmentation dans $S$, puisque le nombre total de sommets disponibles est limité à $n$.
  
- D'après le théorème de Hopcroft-Karp, le nombre de chemins d'augmentation dans $S$ est égal à la différence $\abs {M\sun} - \abs M$. D'où ici, $\abs {M\sun} - \abs M \leq \sqrt n$ Comme chaque étape de l'algorithme trouve au moins un chemin d'augmentation, à chaque étape $M$ croît en cardinal par au moins 1. Par suite, à l'étape $2 \sqrt n$ (ou avant si l'algorithme termine plus tôt), on a forcément $\abs M = \abs {M\sun}$, et $M$ est donc le couplage maximal recherché.
+ D'après le théorème de Hopcroft-Karp, le nombre de chemins d'augmentation dans $S$ est égal à la différence $\abs {M\sun} - \abs M$. D'où ici, $\abs {M\sun} - \abs M \leq \sqrt n$ Comme chaque étape de l'algorithme trouve au moins un chemin d'augmentation, à chaque étape $M$ croît en cardinal par au moins 1. Par suite, à l'étape $2 \sqrt n$ (ou avant si l'algorithme termine plus tôt), on a forcément $\abs M = \abs {M\sun}$, et $M$ est donc le couplage maximum recherché.
  
  Par suite, l'algorithme de Hopcroft-Karp se termine donc toujours après $O(2\sqrt n) = O(\sqrt n)$ étapes, chaque étape ayant une complexité de $O(m)$, d'où la complexité finale de Hopcroft-Karp qui est bien $O(m \sqrt n) = O(n^2 \sqrt n) = O(n^{2.5})$.
  
  \subsection{brouillon}
- 
- --- remplacer maximal par maximum
  
 \end{document}
