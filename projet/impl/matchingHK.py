@@ -213,5 +213,13 @@ def interval (a, b):
   return list(range(a, b+1))
 print(matchingHK(GG, interval(1,6), interval(7,12)))
 
+from randomBip import *
+from bruteForce import *
+
+bruteForce(GG, interval(1,6))
+
+GGG = buildBipartite(20, randomBipartite(20,8))
+print(GGG)
+bruteForce(GGG, interval(13,20))
 # TODO list:
 # -- delete Y from arguments of shortest augmenting path

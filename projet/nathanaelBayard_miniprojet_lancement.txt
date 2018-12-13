@@ -1,0 +1,10 @@
+Binôme:
+-- (Nathanael Bayard)^2
+Projet choisi:
+-- Problème de Couplage (des Mariages)
+Méthode choisie:
+-- Algorithme de Hopcroft-Karp, en O(m sqrt(n)) = O(n^2.5)
+Partie Théorique:
+-- Théorème de Hall
+-- Description de l'algorithme de H.K.
+-- Preuve de la complexité de l'algorithme
