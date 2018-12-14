@@ -1,26 +1,37 @@
 from vect import *
 import random
+from copy import copy
 
 # Note: Tout le code exécutable de ce fichier est tout à la fin.
 
 # ------------------------------------
 # ------------------------------------
-# Avancement du projet
+# AVANCEMENT DU PROJET
 #
-# Hopcroft-Karp a été codé, nettoyé (cf ci-dessous) et vérifié.
+# Hopcroft-Karp a été codé, testé et vérifié.
 #
+# J'ai écrit une fonction pour créer des graphes biparti aléatoires
+# et une autre qui s'arrange pour que le graphe biparti généré
+# ne respecte pas la condition du théorème de hall, et donc qu'il
+# n'admette pas de couplage parfait.
 # Une méthode exhaustive bruteforce par backtracking a été écrite
 # afin de vérifier que les solutions données par mon implémentation
 # de Hopcroft-Karp sont optimales.
-# J'ai écrit une fonction pour créer des graphes biparti aléatoires
-# et une autre qui s'arrange pour que le graphe biparti généré
-# ne respecte pas le théorème de hall, et donc qu'il n'admette pas de
-# couplage parfait.
-# Je n'ai pas eu le temps cela dit de nettoyer le code pour tout cela.
+# Une petite fonction (check_matchingHK) dont l'appel a été commenté
+# teste la cohérence des résultats entre la méthode HK et la méthode
+# exhaustive.
+# Elle tourne en boucle jusqu'à trouver un graphe aléatoire pour lequel mon
+# implémentation de HK échouerait à trouver une méthode optimale,
+# ce qui jusque là n'est jamais arrivé.
 #
 # J'ai écrit un rapport présentant et prouvant le théorème de hall,
 # celui de Berge et celui de Hopcroft-Karp, présentant l'algorithme
 # de H.K., sa complexité, et la preuve de sa complexité.
+#
+# Je compte ajouter des exemples de graphes ne respectant pas la 
+# condition de Hall aux tests de Hopcroft-Karp.
+# Je vais aussi peut-être coder l'algorithme de couplage par
+# chemins augmentant simple (celui en O(n^3)).
 
 
 # ------------------------------------
@@ -104,7 +115,7 @@ def matchingHK(G, X):
           cardM += 1 # |M| a augmenté d'une arête
     
     # on recommence le processus depuis le début
-    print("Couplage M à l'étape", etape, ":", M)
+    print("[HK] Couplage M à l'étape", etape, ":", M)
     etape += 1
     shortestLength, distance = BFS_shortestAugmentingPath(G, X, M)
 
@@ -276,6 +287,7 @@ def DFS_augmentM(v, G, M, visited, distance, shortestLength):
   verbose("return False: backtrack sans succès")
   return False # pas de chemin d'augmentation trouvé
 
+
 # ------------------------------------
 # ------------------------------------
 # TESTS
@@ -287,9 +299,10 @@ def test_matchingHK(G, cardX):
   print("Couplage maximum trouvé:", M)
   print("Taille du couplage: |M| =", cardM)
 
+
 # ------------------------------------
 # ------------------------------------
-# Génération de Graphes Aléatoires
+# GÉNÉRATION DE GRAPHES ALÉATOIRES
 
 def randomBool(): 
   return bool(random.getrandbits(1))
@@ -324,7 +337,7 @@ def randomBipartite(n, cardX):
 # que B = {1, ..., k} subset X
 # soit tel que |B| = k > |V(B)|
 # En d'autres termes, G ne respecte pas
-# le théorème de Hall, n'admet donc pas
+# la condition de Hall, n'admet donc pas
 # de couplage parfait.
 # Condition d'entrée: halfn >= 3
 def randomImperfectBipartite(halfn):
@@ -372,24 +385,105 @@ def randomImperfectBipartite(halfn):
       # halfn = |X| >= 3.
   return G
 
+
 # ------------------------------------
 # ------------------------------------
-# DÉFINITION DES GRAPHES D'EXEMPLES
+# ALGORITHME EXHAUSTIF BRUTEFORCE
+# Pour vérifier les résultats de Hopcroft-Karp
+
+# calcule le cardinal d'un couplage
+# en nombre d'arêtes
+def cardOfM(M):
+  card = len(M)
+  for v in M:
+    if v == 0: # si v est libre dans M
+      card -= 1
+  return card//2
+
+# Cet algorithme est volontairement
+# inefficace et peu optimisé, mais 
+# suffisament clair pour être trustworthy.
+# Input:
+# -- i = curseur sur les éléments de X
+# Output: (par paramètre modifié)
+# -- maxCardM: une liste d'un élément commune à
+#   tous les appels récursifs, contenant à la fin
+#   la taille d'un couplage maximum pour G.
+# Principe:
+#   Pour tout x dans X, on explore l'option de l'associer
+#   à n'importe quel élément de G[x] disponible, et
+#   aussi l'option de le laisser tout seul.
+def exhaustive_rec(i, G, X, M, maxCardM):
+  if i == len(X):
+    cardM = cardOfM(M)
+    maxCardM[0] = max(cardM, maxCardM[0])
+    return
+  else:
+    x = X[i]
+    for y in G[x]:
+      if M[y] == 0:
+        # y est libre
+        M[y] = x
+        M[x] = y
+        exhaustive_rec(i + 1, G, X, M, maxCardM)
+        M[y] = 0 # unmatch y
+        M[x] = 0 # unmatch x
+    #
+    # on explore finalement l'option de laisser x libre
+    exhaustive_rec(i + 1, G, X, M, maxCardM)
+
+# initialisation de la récursion
+def exhaustive(G, X):
+  M = initVect(len(G), 0)
+  maxCardM = [0]
+  exhaustive_rec(0, G, X, M, maxCardM)
+  return maxCardM[0]
+
+
+
+# ------------------------------------
+# ------------------------------------
+# CODE EXECUTABLE
+
 G1 = [[], [7,8,11],[7,10],[8],[9,11],[9],[9,12], # X
           [1,2],[1,3],[4,5,6],[2],[1,4],[6]] # Y
 G2 = [[], [6,7],[6,10],[8,9],[6,10],[7,9],
           [1,2,4],[1,5],[3],[3,5],[2,4]] # example des marriages
 
-# ------------------------------------
-# ------------------------------------
-# Code exécutable de ce fichier (~= main())
+# test de Hopcroft-Karp sur G1 et G2:
 test_matchingHK(G1, 6)
 test_matchingHK(G2, 5)
 
-#for n in range(3,10):
-#  test = randomImperfectBipartite(n)
-#  print(test)
-#for n in range(3,10):
-#  test = randomBipartite(n, n//2)
-#  print(test)
+# vérifier manuellement que les
+# graphes générés aléatoirement sont
+# bien formés (pas de sommets isolés, etc)
+# et que ceux qui sont censés 
+def test_random_generation():
+  for n in range(3,10):
+    test = randomImperfectBipartite(n)
+    print(test)
+  for n in range(3,10):
+    test = randomBipartite(n, n//2)
+    print(test)
+# test_random_generation()
 
+# Cette fonction construit des graphes aléatoires
+# ne respectant pas la condition de Hall, et vérifie
+# que le plus grand couplage trouvé par Hopcroft-Karp
+# est aussi grand que le plus grand trouvé par
+# algorithme exhaustif.
+# Cette fonction ne s'arrête jamais, sauf si elle tombe sur un
+# exemple pour lequel H-K échoue à être optimal.
+# D'expérience, elle ne s'est jamais arrêté toute seule.
+def check_matchingHK():
+  while True:
+    for n in range(3, 12):
+      G = randomImperfectBipartite(n)
+      X = interval(1,n)
+      bruteMax = exhaustive(G, X)
+      M, hkMax = matchingHK(G, X)
+      ok = bruteMax == hkMax
+      print(n, bruteMax, ok)
+      assert(ok)
+
+#check_matchingHK()
