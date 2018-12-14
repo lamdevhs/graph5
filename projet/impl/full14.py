@@ -1,4 +1,7 @@
 from vect import *
+import random
+
+# Note: Tout le code exécutable de ce fichier est tout à la fin.
 
 # ------------------------------------
 # ------------------------------------
@@ -279,22 +282,114 @@ def DFS_augmentM(v, G, M, visited, distance, shortestLength):
 def test_matchingHK(G, cardX):
   print("---- Test de matchingHK, G =", G)
   X = interval(1,cardX) # X = {1,..., |X|}
-  input("Tapez <entrer> pour lancer l'algo sur G")
+  #input("Tapez <entrer> pour lancer l'algo sur G")
   M, cardM = matchingHK(G, X)
   print("Couplage maximum trouvé:", M)
   print("Taille du couplage: |M| =", cardM)
 
 # ------------------------------------
 # ------------------------------------
+# Génération de Graphes Aléatoires
+
+def randomBool(): 
+  return bool(random.getrandbits(1))
+
+# V = {1,...,|X|} union {|X|+1,..., n}
+# |V| = n and y = |Y| = n - |X|
+def randomBipartite(n, cardX):
+  G = initVectList(n+1)
+  cardY = n - cardX
+  X = interval(1, cardX)
+  Y = interval(cardX + 1, n)
+  for x in X:
+    Vx = G[x]
+    while len(Vx) == 0: # nobody wants to be alone
+      for y in Y:
+        if randomBool():
+          Vx.append(y)
+          G[y].append(x)
+  # on s'assure que les sommets de Y
+  # ne sont pas isolés 
+  for y in Y:
+    if len(G[y]) == 0:
+      x = random.randint(1,cardX)
+      G[x].append(y)
+      G[y].append(x)
+  return G
+
+# Crée un graphe aléatoire G = (X u Y, E)
+# avec E subset X x Y,
+# n = |X u Y| et n/2 = |X| = |Y|
+# et tel qu'il existe k < |X| tel
+# que B = {1, ..., k} subset X
+# soit tel que |B| = k > |V(B)|
+# En d'autres termes, G ne respecte pas
+# le théorème de Hall, n'admet donc pas
+# de couplage parfait.
+# Condition d'entrée: halfn >= 3
+def randomImperfectBipartite(halfn):
+  assert(halfn >= 3)
+  n = halfn*2
+  G = initVectList(n+1)
+  cardX = halfn
+  cardY = halfn
+  Y = interval(cardX + 1, n)
+  k = random.randint(2,cardX-1) # 2 <= k < |X|
+  B = interval(1, k)
+  maxVoisinsDeB = random.randint(1,k-1)
+  # k > maxVoisinsDeB >= |V(B)|
+  # tous les voisins de B doivent être dans
+  # {|X| + 1, |X| + maxVoisinsDeB} subset Y
+  voisinsPossiblesDeB = interval(cardX + 1, cardX + maxVoisinsDeB)
+  # cela assurera |B| = k > |V(B)|
+  for x in B:
+    Vx = G[x] # voisinage de x
+    while len(Vx) == 0:
+      # on ne veut pas de sommets isolés
+      for y in voisinsPossiblesDeB:
+        # on associe ou non x et y aléatorement
+        if randomBool():
+          Vx.append(y)
+          G[y].append(x)
+  # pour les autres éléments de X
+  # il n'y a pas de restrictions
+  # sur leurs voisins
+  X_minus_B = interval(k+1, cardX)
+  for x in X_minus_B:
+    Vx = G[x]
+    while len(Vx) == 0: # nobody wants to be alone
+      for y in Y: # on associe ou non x et y aléatorement
+        if randomBool():
+          Vx.append(y)
+          G[y].append(x)
+  # on s'assure enfin qu'aucun sommet de Y n'est vide:
+  for y in Y:
+    if len(G[y]) == 0:
+      G[k+1].append(y)
+      G[y].append(k+1)
+      # k + 1 <= |X| donc k+1 est dans X\B
+      # c'est pour ça qu'il faut que
+      # halfn = |X| >= 3.
+  return G
+
+# ------------------------------------
+# ------------------------------------
 # DÉFINITION DES GRAPHES D'EXEMPLES
-verbose("Graphes d'exemples:")
 G1 = [[], [7,8,11],[7,10],[8],[9,11],[9],[9,12], # X
           [1,2],[1,3],[4,5,6],[2],[1,4],[6]] # Y
 G2 = [[], [6,7],[6,10],[8,9],[6,10],[7,9],
           [1,2,4],[1,5],[3],[3,5],[2,4]] # example des marriages
-verbose("G1",G1)
-verbose("G2",G2)
 
+# ------------------------------------
+# ------------------------------------
+# Code exécutable de ce fichier (~= main())
 test_matchingHK(G1, 6)
 test_matchingHK(G2, 5)
+
+#for n in range(3,10):
+#  test = randomImperfectBipartite(n)
+#  print(test)
+#for n in range(3,10):
+#  test = randomBipartite(n, n//2)
+#  print(test)
 
