@@ -24,13 +24,12 @@ def bruteForce_rec_draft(i, G, X, M, cardM, bestCardM, bestM):
     pass
   return bestCardM, bestM
      
-def bruteForce_rec(i, G, X, M, bestFound, bestM):
+def bruteForce_rec(i, G, X, M, solutions):
   if i == len(X):
     print("Reached full end: cardM =", i)
-    bestM = copy(M)
-    bestFound = i
-    print("retourne best", i, bestM)
-    return bestFound, bestM
+    print("retourne best", i)
+    solutions.append(copy(M))
+    return
   x = X[i]
   stuck = True
   for y in G[x]:
@@ -39,20 +38,15 @@ def bruteForce_rec(i, G, X, M, bestFound, bestM):
       print("Match", x, "with", y)
       M[y] = x
       M[x] = y
-      resultFound, resultM = bruteForce_rec(i + 1, G, X, M, bestFound, bestM)
-      if resultFound > bestFound:
-        bestFound = resultFound
-        bestM = resultM
+      bruteForce_rec(i + 1, G, X, M, solutions)
       M[y] = 0 # unmatch y
       M[x] = 0 # unmatch x
-  if stuck:
-    print(x, "can't be matched: end with cardM =", i)
-  if bestFound < i:
-    bestFound = i
-    bestM = copy(M)
-  print("retourne best", bestFound, bestM)
-  return bestFound, bestM
+  bruteForce_rec(i + 1, G, X, M, solutions)
+  # ^ we continue, leaving X unmatched
+  return
 
 def bruteForce(G, X):
   M = initVect(len(G), 0)
-  bruteForce_rec(0, G, X, M, 0, copy(M))
+  solutions = []
+  bruteForce_rec(0, G, X, M, solutions)
+  return solutions

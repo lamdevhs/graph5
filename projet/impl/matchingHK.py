@@ -216,10 +216,47 @@ print(matchingHK(GG, interval(1,6), interval(7,12)))
 from randomBip import *
 from bruteForce import *
 
-bruteForce(GG, interval(1,6))
+GGG = randomImperfectBipartite(10)
+#matchingHK(GGG)
+val = bruteForce(GGG, interval(1,10))
+def noDup(l):
+  for i in range(len(l)):
+    for j in range(len(l)):
+      if i > j and l[i] == l[j]:
+        return False
+  return True
+def best(sols):
+  total = len(sols[0])
+  maxi = 0
+  for M in sols:
+    free = 0
+    for v in M:
+      if v == 0:
+        free += 1
+    cardM = total - free
+    if cardM > maxi:
+      maxi = cardM
+  return maxi
+print(best(val))
+res = bruteForce(GG, interval(1,10))
+print(res)
+print(best(res))
 
-GGG = buildBipartite(20, randomBipartite(20,8))
+MMM, sizeres = matchingHK(GGG, interval(1,10), None)
+brutemax = best(val)
+print(val)
 print(GGG)
-bruteForce(GGG, interval(13,20))
+print(MMM)
+n = 0
+ok = True
+while ok:
+  GGG = randomImperfectBipartite(10)
+  MMM, sizeres = matchingHK(GGG, interval(1,10), None)
+  val = bruteForce(GGG, interval(1,10))
+  brutemax = best(val)
+  ok = brutemax/2 == sizeres
+print("an error was detected")
+
+
 # TODO list:
 # -- delete Y from arguments of shortest augmenting path
