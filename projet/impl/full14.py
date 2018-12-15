@@ -1,6 +1,5 @@
 from vect import *
 import random
-from copy import copy
 
 # Note: Tout le code exécutable de ce fichier est tout à la fin.
 
@@ -24,14 +23,18 @@ from copy import copy
 # implémentation de HK échouerait à trouver une méthode optimale,
 # ce qui jusque là n'est jamais arrivé.
 #
+# J'ai aussi implémenté l'algorithme de couplage par
+# chemins augmentant simple (celui en O(n^3)).
+# Idem il y a une fonction qui vérifie sa cohérence par rapport à
+# l'algorithme de recherche exhaustif.
+#
 # J'ai écrit un rapport présentant et prouvant le théorème de hall,
 # celui de Berge et celui de Hopcroft-Karp, présentant l'algorithme
 # de H.K., sa complexité, et la preuve de sa complexité.
 #
-# Je compte ajouter des exemples de graphes ne respectant pas la 
-# condition de Hall aux tests de Hopcroft-Karp.
-# Je vais aussi peut-être coder l'algorithme de couplage par
-# chemins augmentant simple (celui en O(n^3)).
+# Il me faudrait encore polir un peu le rapport écrit, et un peu ce
+# fichier aussi, cependant je ne pense pas nécessairement ajouter grand
+# chose de plus que ce que j'ai déjà fait.
 
 
 # ------------------------------------
@@ -47,9 +50,9 @@ def interval (a, b):
 # ------------------------------------
 # CONTROLE DE LA VERBOSITÉ
 
-print("Verbosité : juste tapez <entrer> pour la version non verbeuse,")
-print("et n'importe quoi d'autre pour la version verbeuse.")
-if input("Enter verbosity mode: ") == '':
+print("Verbosité : juste tapez <entrer> pour la version PAS (trop) verbeuse,")
+print("et n'importe quoi d'autre pour la version (très) verbeuse.")
+if input("Faites votre choix: ") == '':
   print("Mode non verbeux")
   def verbose(*args):
     pass # don't print anything
@@ -270,7 +273,8 @@ def DFS_augmentM(v, G, M, visited, distance, shortestLength):
     # l'arête suivante doit être dans M, donc
     # doit être {v,M[v]},
     # sauf si v est libre pour M: mais c'est impossible
-    # par hypothèse de récursion.
+    # par hypothèse de récursion (si v était libre on aurait
+    # déjà fini ce parcours en cours.
     w = M[v]
     verbose("w = M[v] =", w)
     if not visited[w] and distance[w] == d + 1:
@@ -286,18 +290,6 @@ def DFS_augmentM(v, G, M, visited, distance, shortestLength):
         return found
   verbose("return False: backtrack sans succès")
   return False # pas de chemin d'augmentation trouvé
-
-
-# ------------------------------------
-# ------------------------------------
-# TESTS
-def test_matchingHK(G, cardX):
-  print("---- Test de matchingHK, G =", G)
-  X = interval(1,cardX) # X = {1,..., |X|}
-  #input("Tapez <entrer> pour lancer l'algo sur G")
-  M, cardM = matchingHK(G, X)
-  print("Couplage maximum trouvé:", M)
-  print("Taille du couplage: |M| =", cardM)
 
 
 # ------------------------------------
@@ -443,16 +435,106 @@ def exhaustive(G, X):
 
 # ------------------------------------
 # ------------------------------------
-# CODE EXECUTABLE
+# ALGORITHME DES CHEMINS D'AUGMENTATION
+# (la version simple en O(n^3))
 
-G1 = [[], [7,8,11],[7,10],[8],[9,11],[9],[9,12], # X
-          [1,2],[1,3],[4,5,6],[2],[1,4],[6]] # Y
-G2 = [[], [6,7],[6,10],[8,9],[6,10],[7,9],
-          [1,2,4],[1,5],[3],[3,5],[2,4]] # example des marriages
+def simpleMatching(G, X):
+  M = initVect(len(G), 0)
+  cardM = 0
+  n = len(G) - 1
+  cardX = len(X)
+  cardY = n - cardX
+  boundary = min(cardX, cardY)
+  # ^ forcément cardM <= boundary
 
-# test de Hopcroft-Karp sur G1 et G2:
-test_matchingHK(G1, 6)
-test_matchingHK(G2, 5)
+  etape = 1
+  # tant qu'on trouve des chemins d'augmentation:
+  while cardM != boundary and DFS_findOnePath(G,X,M) != False:
+    cardM += 1
+    print("[SIMPLE] Couplage M à l'étape", etape, ":", M)
+    etape += 1
+  # il n'existe plus de chemins d'augmentation pour M dans G,
+  # donc d'après le Théorème de Berge, M est maximum.
+  return (M, cardM)
+  
+def DFS_findOnePath(G,X,M):
+  for x in X:
+    if M[x] == 0:
+      visited = initVect(len(G), False)
+      found = DFS_findOnePath_rec(x, True, G, M, visited)
+      if found:
+        return found
+  return False
+  # impossible de trouver un chemin d'augmentation pour M
+    
+
+def DFS_findOnePath_rec(v, isInX, G, M, visited):
+  verbose("visite de", v)
+  visited[v] = True
+  if isInX: # == v in X
+    verbose("niveau de profondeur paire")
+    # il faut explorer des arêtes qui ne sont pas dans M
+    for w in G[v]:
+      verbose("voisin  w =", w)
+      if not visited[w]:
+        # si M[v] == w, alors v n'est pas libre, son parent
+        # dans l'arbre de parcours DFS doit être w, donc
+        # w a déjà été visité: contradiction. Donc M[v] != w.
+        # Donc (v, w) n'est pas dans M.
+        verbose("w est acceptable")
+        if M[w] == 0:
+          verbose("w est libre: un plus court chemin d'augmentation trouvé")
+          visited[w] == True
+          found = True
+        else:
+          # récursion
+          verbose("récursion à partir de w")
+          found = DFS_findOnePath_rec(w, not isInX, G, M, visited)
+          verbose("remontée: v =", v)
+        if found:
+          # we do a symetric difference between M
+          # and the path we found, so here
+          # we create the edge (v,w) in M
+          verbose("Augmentation de M")
+          M[v] = w
+          M[w] = v
+          return found
+  else: # v not in X donc v in Y
+    verbose("niveau de profondeur impair")
+    # l'arête suivante doit être dans M, donc
+    # doit être {v,M[v]},
+    # sauf si v est libre pour M: mais c'est impossible
+    # par hypothèse de récursion (si v était libre on aurait
+    # déjà fini ce parcours en cours.
+    w = M[v]
+    verbose("w = M[v] =", w)
+    if not visited[w]:
+      verbose("w = M[v] is acceptable, récursion")
+      found = DFS_findOnePath_rec(w, not isInX, G, M, visited)
+      verbose("remontée: v =", v)
+      if found:
+        verbose("chemin trouvé précédemment, augmentation passive de M")
+        # on fait un différence symétrique entre M
+        # et le chemin trouvé, et ici l'arête en cours est
+        # {v,w} is in M, donc on ne fait rien, et on laisse
+        # les arêtes d'avant et d'après séparer v et w pour M
+        return found
+  verbose("return False: backtrack sans succès")
+  return False # pas de chemin d'augmentation trouvé
+
+
+# ------------------------------------
+# ------------------------------------
+# FONCTIONS DE TESTS
+
+def test_matchingHK(G, cardX):
+  print("---- Test de matchingHK, G =", G)
+  X = interval(1,cardX) # X = {1,..., |X|}
+  #input("Tapez <entrer> pour lancer l'algo sur G")
+  M, cardM = matchingHK(G, X)
+  print("Couplage maximum trouvé:", M)
+  print("Taille du couplage: |M| =", cardM)
+
 
 # vérifier manuellement que les
 # graphes générés aléatoirement sont
@@ -467,23 +549,61 @@ def test_random_generation():
     print(test)
 # test_random_generation()
 
-# Cette fonction construit des graphes aléatoires
-# ne respectant pas la condition de Hall, et vérifie
-# que le plus grand couplage trouvé par Hopcroft-Karp
-# est aussi grand que le plus grand trouvé par
-# algorithme exhaustif.
-# Cette fonction ne s'arrête jamais, sauf si elle tombe sur un
-# exemple pour lequel H-K échoue à être optimal.
-# D'expérience, elle ne s'est jamais arrêté toute seule.
-def check_matchingHK():
+def check_algo(algo):
   while True:
     for n in range(3, 12):
       G = randomImperfectBipartite(n)
       X = interval(1,n)
       bruteMax = exhaustive(G, X)
-      M, hkMax = matchingHK(G, X)
-      ok = bruteMax == hkMax
-      print(n, bruteMax, ok)
-      assert(ok)
+      M, algoMax = algo(G, X)
+      ok = bruteMax == algoMax
+      print(n, bruteMax, algoMax, ok)
+      if not ok:
+        print(G, M)
+        raise Exception("the Checking found a failure")
 
-#check_matchingHK()
+# Test de simpleMatching
+def test_simple(G, cardX):
+  print("---- Test de simpleMatching, G =", G)
+  X = interval(1,cardX) # X = {1,..., |X|}
+  #input("Tapez <entrer> pour lancer l'algo sur G")
+  M, cardM = simpleMatching(G, X)
+  print("Couplage maximum trouvé:", M)
+  print("Taille du couplage: |M| =", cardM)
+  
+
+
+
+# ------------------------------------
+# ------------------------------------
+# CODE EXECUTABLE
+
+G1 = [[], [7,8,11],[7,10],[8],[9,11],[9],[9,12], # X
+          [1,2],[1,3],[4,5,6],[2],[1,4],[6]] # Y
+G2 = [[], [6,7],[6,10],[8,9],[6,10],[7,9],
+          [1,2,4],[1,5],[3],[3,5],[2,4]] # example des marriages
+G3 = [[], [4], [4], [4, 5, 6], [1, 2, 3], [3], [3]]
+
+# test de Hopcroft-Karp sur G1 et G2:
+test_matchingHK(G1, 6)
+test_matchingHK(G2, 5)
+test_matchingHK(G3, 3)
+
+test_simple(G1, 6)
+test_simple(G2, 5)
+test_simple(G3, 3)
+
+#check_algo(matchingHK)
+  # ^ Cette appel de fonction construit des graphes aléatoires
+  # ne respectant pas la condition de Hall, et vérifie
+  # que le plus grand couplage trouvé par Hopcroft-Karp
+  # est aussi grand que le plus grand trouvé par
+  # algorithme exhaustif.
+  # Cette fonction ne s'arrête jamais, sauf si elle tombe sur un
+  # exemple pour lequel H-K échoue à être optimal.
+  # D'expérience, elle ne s'est jamais arrêté toute seule.
+
+#check_algo(simpleMatching)
+  # ^ même chose pour l'algorithme simple par chemins
+  # d'augmentation non optimisé.
+
