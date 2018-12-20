@@ -3,39 +3,10 @@ import random
 
 # Note: Tout le code exécutable de ce fichier est tout à la fin.
 
-# ------------------------------------
-# ------------------------------------
-# AVANCEMENT DU PROJET
-#
-# Hopcroft-Karp a été codé, testé et vérifié.
-#
-# J'ai écrit une fonction pour créer des graphes biparti aléatoires
-# et une autre qui s'arrange pour que le graphe biparti généré
-# ne respecte pas la condition du théorème de hall, et donc qu'il
-# n'admette pas de couplage parfait.
-# Une méthode exhaustive bruteforce par backtracking a été écrite
-# afin de vérifier que les solutions données par mon implémentation
-# de Hopcroft-Karp sont optimales.
-# Une petite fonction (check_matchingHK) dont l'appel a été commenté
-# teste la cohérence des résultats entre la méthode HK et la méthode
-# exhaustive.
-# Elle tourne en boucle jusqu'à trouver un graphe aléatoire pour lequel mon
-# implémentation de HK échouerait à trouver une méthode optimale,
-# ce qui jusque là n'est jamais arrivé.
-#
-# J'ai aussi implémenté l'algorithme de couplage par
-# chemins augmentant simple (celui en O(n^3)).
-# Idem il y a une fonction qui vérifie sa cohérence par rapport à
-# l'algorithme de recherche exhaustif.
-#
-# J'ai écrit un rapport présentant et prouvant le théorème de hall,
-# celui de Berge et celui de Hopcroft-Karp, présentant l'algorithme
-# de H.K., sa complexité, et la preuve de sa complexité.
-#
-# Il me faudrait encore polir un peu le rapport écrit, et un peu ce
-# fichier aussi, cependant je ne pense pas nécessairement ajouter grand
-# chose de plus que ce que j'ai déjà fait.
-
+# Afin de conserver la lisibilité du code, certains
+# commentaires sont placés après la fonction commentée,
+# et sont référencés dans la fonctions par la notation
+# <1>, <2>, etc.
 
 # ------------------------------------
 # ------------------------------------
@@ -58,9 +29,7 @@ if input("Faites votre choix: ") == '':
     pass # don't print anything
 else:
   print("Mode verbeux")
-  def verbose(offset, *args): # offset: crée une indentation
-    print(*([' '*offset] + list(args)))
-  def verbose(*args): # offset: crée une indentation
+  def verbose(*args):
     print(*args)
 
 
@@ -83,48 +52,55 @@ else:
 def matchingHK(G, X):
   M = initVect(len(G), 0)
   cardM = 0
-  
-  # parcours de M en largeur à partir de tous les sommets libres
-  # de X, en s'arrêtant à la plus petite profondeur où l'on trouve
-  # le premier chemin d'augmentation pour M.
-  shortestLength, distance = BFS_shortestAugmentingPath(G, X, M)
-  # ^ retourne la longueur du plus court chemin d'augmentation
-  # pour M, et le vecteur des distances du parcours en largeur
-
   etape = 1
+  shortestLength, distance = BFS_shortestAugmentingPath(G, X, M)
+  # ^ commentaire <1>
+
   # tant qu'on trouve des chemins d'augmentation:
   while shortestLength != Infinity:
     DFS_visited = initVect(len(G), False)
-    # ^ vecteur des visites du DFS généralisé
-    # il ne sera pas remis à zéro avant le prochain
-    # tour de boucle: pas de revisite admise.
-
-    # A partir de tous les sommets libres de X,
-    # recherche par parcours profondeur d'un chemin
-    # d'augmentation de M de longueur shortestLength.
-    # Tous ces chemins d'augmentations doivent être deux à
-    # deux disjoints. Il suffit pour cela de refuser toute revisite.
-    # Chaque chemin trouvé est aussitôt utilisé pour augmenter M lors
-    # de la remontée de la pile d'exécution.
-    for x in X:
+    # ^ commentaire <2>
+    for x in X: # commentaire <3>
       if M[x] == 0: # si x est libre
-        # recherche d'un chemin d'augmentation de longueur shortestLength
-        # à partir de x, qui ne passe pas par un des sommets déjà visités.
+        # commentaire <4>
         verbose(">>> Début de DFS à partir de", x)
-        found = DFS_augmentM(x, G, M, DFS_visited, distance, shortestLength)
+        found = DFS_augmentM(x, G, M, DFS_visited,
+            distance, shortestLength)
         verbose(">>> Fin de DFS à partir de", x)
         if found:
           # un chemin d'augmentation pour M a été trouvé
           cardM += 1 # |M| a augmenté d'une arête
-    
-    # on recommence le processus depuis le début
+    #
+    # on recommence le processus depuis le début:
     print("[HK] Couplage M à l'étape", etape, ":", M)
     etape += 1
     shortestLength, distance = BFS_shortestAugmentingPath(G, X, M)
-
+  #
   # il n'existe plus de chemins d'augmentation pour M dans G,
   # donc d'après le Théorème de Berge, M est maximum.
   return (M, cardM)
+
+# <1> parcours de M en largeur à partir de tous les sommets libres
+# de X, en s'arrêtant à la plus petite profondeur où l'on trouve
+# le premier chemin d'augmentation pour M.
+# Retourne la longueur du plus court chemin d'augmentation
+# pour M, et le vecteur des distances du parcours en largeur
+
+# <2> vecteur des visites du DFS généralisé
+# il ne sera pas remis à zéro avant le prochain
+# tour de boucle: pas de revisite admise.
+
+# <3> A partir de tous les sommets libres de X,
+# recherche par parcours profondeur d'un chemin
+# d'augmentation de M de longueur shortestLength.
+# Tous ces chemins d'augmentations doivent être deux à
+# deux disjoints. Il suffit pour cela de refuser toute revisite.
+# Chaque chemin trouvé est aussitôt utilisé pour augmenter M lors
+# de la remontée de la pile d'exécution.
+
+# <4> recherche d'un chemin d'augmentation de longueur shortestLength
+# à partir de x, qui ne passe par aucun des sommets déjà visités.
+
 
 
 # == Fonction BFS_shortestAugmentingPath
@@ -145,15 +121,12 @@ def matchingHK(G, X):
 # -- distance:       vecteur des distances du parcours profondeur.
 def BFS_shortestAugmentingPath(G, X, M):
   shortestLength = Infinity
-
   distance = initVect(len(G), Infinity)
-  # distance: de chaque sommet, dans l'arbre de parcours
+  # ^ distance: de chaque sommet, dans l'arbre de parcours
   # par rapport aux racines (points de départ) de l'arbre.
   # càd tous les sommets libres (par rapport à M) de X
-  
   visited = initVect(len(G), False)
   # ^ pas de revisite dans ce BFS
-  
   queue = []
   # initialisation: mettre toutes les racines
   # dans la file: les sommets libres de X.
@@ -176,15 +149,7 @@ def BFS_shortestAugmentingPath(G, X, M):
       verbose("exploration à partir de head")
       if d % 2 == 0:
         verbose("niveau de profondeur pair")
-        # head est dans X.
-        # Pair ==> les arêtes à traverser ici doivent
-        # être des arêtes qui n'appartiennent *pas* à M.
-        # Si head est libre, càd M[head] == 0, alors
-        # parcourir tous ses voisins non visités.
-        # Si head n'est pas libre, son parent dans l'arbre de
-        # parcours est M[head], donc a déjà été visité.
-        # Dans les deux cas: il suffit de visiter tous les voisins
-        # de head non visités.
+        # commentaire <5>
         for v in G[head]:
           verbose("voisin de head v =", v)
           if not visited[v]:
@@ -202,13 +167,7 @@ def BFS_shortestAugmentingPath(G, X, M):
               shortestLength = distance[v]
       else: # d == 1 mod 2: niveau de profondeur impair
         verbose("niveau de profondeur impair")
-        # head est dans Y.
-        # la prochaine arête traversée doit être dans M.
-        # la seule candidate est donc {head, M[head]}
-        # si M[head] == 0, alors head est l'extrémité d'un chemin
-        # d'augmentation de M, donc distance[head] >= shortestLength:
-        # contradiction avec la condition if ci-dessus.
-        # Donc M[head] n'est pas nul.
+        # commentaire <6>
         v = M[head]
         verbose("voisin = M[head] =", v)
         if not visited[v]:
@@ -218,6 +177,28 @@ def BFS_shortestAugmentingPath(G, X, M):
           visited[v] = True
           queue.append(v)
   return (shortestLength, distance)
+
+# <5> Profondeur paire, donc head est dans X,
+# et les arêtes à traverser à partir d'ici doivent
+# être des arêtes qui n'appartiennent *pas* à M.
+# Si head est libre, càd M[head] == 0, alors
+# parcourir tous ses voisins non visités.
+# Si head n'est pas libre, son parent dans l'arbre de
+# parcours est M[head], donc a déjà été visité.
+# Dans les deux cas: il suffit de visiter tous les voisins
+# de head non visités.
+
+# <6> Profondeur impaire, donc head est dans Y,
+# et la prochaine arête traversée doit être dans M.
+# La seule candidate est donc {head, M[head]}.
+# Si cette arête n'est pas dans M, càd si M[head] == 0,
+# alors head est libre pour M, donc est l'extrémité d'un chemin
+# d'augmentation de M, donc distance[head] >= shortestLength:
+# contradiction avec la condition `if` ci-dessus :
+#    ```if distance[head] < shortestLength:```
+# Donc head n'est pas libre, et M[head] n'est pas nul.
+
+
 
 # Parcours profondeur récursif. Chaque visite d'un sommet u
 # à partir d'un sommet v doit être tel que
@@ -246,10 +227,7 @@ def DFS_augmentM(v, G, M, visited, distance, shortestLength):
     for w in G[v]:
       verbose("voisin  w =", w)
       if not visited[w] and distance[w] == d + 1:
-        # si M[v] == w, alors v n'est pas libre, son parent
-        # dans l'arbre de parcours DFS doit être w, donc
-        # w a déjà été visité: contradiction. Donc M[v] != w.
-        # Donc (v, w) n'est pas dans M.
+        # commentaire <7>
         verbose("w est acceptable")
         if M[w] == 0:
           verbose("w est libre: un plus court chemin d'augmentation trouvé")
@@ -261,20 +239,14 @@ def DFS_augmentM(v, G, M, visited, distance, shortestLength):
           found = DFS_augmentM(w, G, M, visited, distance, shortestLength)
           verbose("remontée: v =", v)
         if found:
-          # we do a symetric difference between M
-          # and the path we found, so here
-          # we create the edge (v,w) in M
+          # commentaire <8>
           verbose("Augmentation de M")
           M[v] = w
           M[w] = v
           return found
   else: # d impair
     verbose("niveau de profondeur impair")
-    # l'arête suivante doit être dans M, donc
-    # doit être {v,M[v]},
-    # sauf si v est libre pour M: mais c'est impossible
-    # par hypothèse de récursion (si v était libre on aurait
-    # déjà fini ce parcours en cours.
+    # commentaire <9>
     w = M[v]
     verbose("w = M[v] =", w)
     if not visited[w] and distance[w] == d + 1:
@@ -283,13 +255,32 @@ def DFS_augmentM(v, G, M, visited, distance, shortestLength):
       verbose("remontée: v =", v)
       if found:
         verbose("chemin trouvé précédemment, augmentation passive de M")
-        # on fait un différence symétrique entre M
-        # et le chemin trouvé, et ici l'arête en cours est
-        # {v,w} is in M, donc on ne fait rien, et on laisse
-        # les arêtes d'avant et d'après séparer v et w pour M
+        # commentaire <10>
         return found
   verbose("return False: backtrack sans succès")
   return False # pas de chemin d'augmentation trouvé
+
+
+# <7> si M[v] == w, alors v n'est pas libre, son parent
+# dans l'arbre de parcours DFS doit être w, donc
+# w a déjà été visité: contradiction. Donc M[v] != w.
+# Donc (v, w) n'est pas dans M.
+
+# <8> on fait la différence symétrique entre M
+# et le chemin trouvé, donc ici
+# on ajoute l'arête (v,w) à M, et on sépare donc
+# éventuellement v et/ou w de leurs précédents partenaires.
+
+# <9> l'arête suivante doit être dans M, donc
+# doit être {v,M[v]},
+# sauf si v est libre pour M: mais c'est impossible
+# par hypothèse de récursion (si v était libre on aurait
+# déjà fini ce parcours en cours.)
+
+# <10> on fait un différence symétrique entre M
+# et le chemin trouvé, et ici l'arête en cours est
+# {v,w} is in M, donc on ne fait rien, et on laisse
+# les arêtes d'avant et d'après séparer v et w pour M
 
 
 # ------------------------------------
@@ -331,7 +322,8 @@ def randomBipartite(n, cardX):
 # En d'autres termes, G ne respecte pas
 # la condition de Hall, n'admet donc pas
 # de couplage parfait.
-# Condition d'entrée: halfn >= 3
+# /!\ Condition sur la valeur d'entrée:
+# il faut que halfn >= 3
 def randomImperfectBipartite(halfn):
   assert(halfn >= 3)
   n = halfn*2
@@ -394,7 +386,7 @@ def cardOfM(M):
 
 # Cet algorithme est volontairement
 # inefficace et peu optimisé, mais 
-# suffisament clair pour être trustworthy.
+# suffisament clair pour être digne de confiance.
 # Input:
 # -- i = curseur sur les éléments de X
 # Output: (par paramètre modifié)
@@ -436,7 +428,7 @@ def exhaustive(G, X):
 # ------------------------------------
 # ------------------------------------
 # ALGORITHME DES CHEMINS D'AUGMENTATION
-# (la version simple en O(n^3))
+# Recherche de couplage maximum en O(n^3)
 
 def simpleMatching(G, X):
   M = initVect(len(G), 0)
@@ -445,7 +437,8 @@ def simpleMatching(G, X):
   cardX = len(X)
   cardY = n - cardX
   boundary = min(cardX, cardY)
-  # ^ forcément cardM <= boundary
+  # ^ forcément, le cardinal du couplage maximum
+  # sera <= boundary
 
   etape = 1
   # tant qu'on trouve des chemins d'augmentation:
@@ -468,6 +461,9 @@ def DFS_findOnePath(G,X,M):
   # impossible de trouver un chemin d'augmentation pour M
     
 
+# Cette fonction est très similaire à la fonction DFS_augmentM
+# ci-dessus, qui est utilisée dans l'algorithme Hopcroft-Karp.
+# Les commentaires sur le code sont donc les mêmes.
 def DFS_findOnePath_rec(v, isInX, G, M, visited):
   verbose("visite de", v)
   visited[v] = True
@@ -477,10 +473,7 @@ def DFS_findOnePath_rec(v, isInX, G, M, visited):
     for w in G[v]:
       verbose("voisin  w =", w)
       if not visited[w]:
-        # si M[v] == w, alors v n'est pas libre, son parent
-        # dans l'arbre de parcours DFS doit être w, donc
-        # w a déjà été visité: contradiction. Donc M[v] != w.
-        # Donc (v, w) n'est pas dans M.
+        # commentaire <7>
         verbose("w est acceptable")
         if M[w] == 0:
           verbose("w est libre: un plus court chemin d'augmentation trouvé")
@@ -492,20 +485,14 @@ def DFS_findOnePath_rec(v, isInX, G, M, visited):
           found = DFS_findOnePath_rec(w, not isInX, G, M, visited)
           verbose("remontée: v =", v)
         if found:
-          # we do a symetric difference between M
-          # and the path we found, so here
-          # we create the edge (v,w) in M
+          # commentaire <8>
           verbose("Augmentation de M")
           M[v] = w
           M[w] = v
           return found
   else: # v not in X donc v in Y
     verbose("niveau de profondeur impair")
-    # l'arête suivante doit être dans M, donc
-    # doit être {v,M[v]},
-    # sauf si v est libre pour M: mais c'est impossible
-    # par hypothèse de récursion (si v était libre on aurait
-    # déjà fini ce parcours en cours.
+    # commentaire <9>
     w = M[v]
     verbose("w = M[v] =", w)
     if not visited[w]:
@@ -514,10 +501,7 @@ def DFS_findOnePath_rec(v, isInX, G, M, visited):
       verbose("remontée: v =", v)
       if found:
         verbose("chemin trouvé précédemment, augmentation passive de M")
-        # on fait un différence symétrique entre M
-        # et le chemin trouvé, et ici l'arête en cours est
-        # {v,w} is in M, donc on ne fait rien, et on laisse
-        # les arêtes d'avant et d'après séparer v et w pour M
+        # commentaire <10>
         return found
   verbose("return False: backtrack sans succès")
   return False # pas de chemin d'augmentation trouvé
@@ -605,5 +589,5 @@ test_simple(G3, 3)
 
 #check_algo(simpleMatching)
   # ^ même chose pour l'algorithme simple par chemins
-  # d'augmentation non optimisé.
+  # d'augmentation (celui en O(n^3)).
 
