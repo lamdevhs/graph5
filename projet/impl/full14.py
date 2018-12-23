@@ -1,12 +1,15 @@
 from vect import *
 import random
 
-# Note: Tout le code exécutable de ce fichier est tout à la fin.
+# Note: Tout le code exécutable de ce fichier se trouve tout à la fin.
 
 # Afin de conserver la lisibilité du code, certains
 # commentaires sont placés après la fonction commentée,
 # et sont référencés dans la fonctions par la notation
 # <1>, <2>, etc.
+
+# Les messages de verbosité qui étaient dans la
+# version remise le 14 dec ont été retirés.
 
 # ------------------------------------
 # ------------------------------------
@@ -16,21 +19,6 @@ Infinity = float("inf")
 def interval (a, b):
   return list(range(a, b+1))
 
-
-# ------------------------------------
-# ------------------------------------
-# CONTROLE DE LA VERBOSITÉ
-
-print("Verbosité : juste tapez <entrer> pour la version PAS (trop) verbeuse,")
-print("et n'importe quoi d'autre pour la version (très) verbeuse.")
-if input("Faites votre choix: ") == '':
-  print("Mode non verbeux")
-  def verbose(*args):
-    pass # don't print anything
-else:
-  print("Mode verbeux")
-  def verbose(*args):
-    print(*args)
 
 
 # == Fonction matchingHK
@@ -63,10 +51,8 @@ def matchingHK(G, X):
     for x in X: # commentaire <3>
       if M[x] == 0: # si x est libre
         # commentaire <4>
-        verbose(">>> Début de DFS à partir de", x)
         found = DFS_augmentM(x, G, M, DFS_visited,
             distance, shortestLength)
-        verbose(">>> Fin de DFS à partir de", x)
         if found:
           # un chemin d'augmentation pour M a été trouvé
           cardM += 1 # |M| a augmenté d'une arête
@@ -137,43 +123,30 @@ def BFS_shortestAugmentingPath(G, X, M):
       queue.append(x)
   
   while len(queue) != 0:
-    verbose("file =", queue)
     head = queue.pop(0)
-    verbose("défilement de head =", head)
     d = distance[head]
-    verbose("distance de head =", d)
     if distance[head] < shortestLength:
       # ^ cette condition permet d'arrêter le parcours
       # largeur prématurément au premier niveau de profondeur
       # où l'on a trouvé un chemin d'augmentation pour M
-      verbose("exploration à partir de head")
       if d % 2 == 0:
-        verbose("niveau de profondeur pair")
         # commentaire <5>
         for v in G[head]:
-          verbose("voisin de head v =", v)
           if not visited[v]:
             # alors nécessairement, v != M[head]
             # donc (head, v) n'est pas dans M
-            verbose("visite de v")
             distance[v] = distance[head] + 1
-            verbose("distance[v] =", distance[v])
             visited[v] = True
             queue.append(v)
             if M[v] == 0:
               # v est dans Y, et libre
-              verbose("!!! shortest path found")
               # on a trouvé un plus petit chemin d'augmentation
               shortestLength = distance[v]
       else: # d == 1 mod 2: niveau de profondeur impair
-        verbose("niveau de profondeur impair")
         # commentaire <6>
         v = M[head]
-        verbose("voisin = M[head] =", v)
         if not visited[v]:
-          verbose("visite de v")
           distance[v] = distance[head] + 1
-          verbose("distance[v] =", distance[v])
           visited[v] = True
           queue.append(v)
   return (shortestLength, distance)
@@ -212,52 +185,36 @@ def BFS_shortestAugmentingPath(G, X, M):
 # qu'on a trouvé le chemin qu'on cherchait.
 # Output
 # -- booléen: True si on a trouvé un chemin d'augmentation
-#    pour M de longueur plus petite que shortestLength.
+#    pour M.
 def DFS_augmentM(v, G, M, visited, distance, shortestLength):
-  verbose("visite de", v)
   visited[v] = True
   d = distance[v]
-  verbose("distance[v] =", d)
   if d == shortestLength:
-    verbose("trop profond: backtracking")
     return False # pas de bon chemin trouvé
   if d % 2 == 0:
-    verbose("niveau de profondeur paire")
     # il faut explorer des arêtes qui ne sont pas dans M
     for w in G[v]:
-      verbose("voisin  w =", w)
       if not visited[w] and distance[w] == d + 1:
         # commentaire <7>
-        verbose("w est acceptable")
         if M[w] == 0:
-          verbose("w est libre: un plus court chemin d'augmentation trouvé")
           visited[w] == True
           found = True
         else:
           # récursion
-          verbose("récursion à partir de w")
           found = DFS_augmentM(w, G, M, visited, distance, shortestLength)
-          verbose("remontée: v =", v)
         if found:
           # commentaire <8>
-          verbose("Augmentation de M")
           M[v] = w
           M[w] = v
           return found
   else: # d impair
-    verbose("niveau de profondeur impair")
     # commentaire <9>
     w = M[v]
-    verbose("w = M[v] =", w)
     if not visited[w] and distance[w] == d + 1:
-      verbose("w = M[v] is acceptable, récursion")
       found = DFS_augmentM(w, G, M, visited, distance, shortestLength)
-      verbose("remontée: v =", v)
       if found:
-        verbose("chemin trouvé précédemment, augmentation passive de M")
         # commentaire <10>
         return found
-  verbose("return False: backtrack sans succès")
   return False # pas de chemin d'augmentation trouvé
 
 
@@ -397,9 +354,8 @@ def cardOfM(M):
 #   Pour tout x dans X, on explore l'option de l'associer
 #   à n'importe quel élément de G[x] disponible, et
 #   aussi l'option de le laisser tout seul.
-def exhaustive_rec(i, G, X, M, maxCardM):
-  if i == len(X):
-    cardM = cardOfM(M)
+def exhaustive_rec(i, G, X, M, cardM, maxCardM):
+  if i == len(X): # condition d'arret
     maxCardM[0] = max(cardM, maxCardM[0])
     return
   else:
@@ -409,18 +365,18 @@ def exhaustive_rec(i, G, X, M, maxCardM):
         # y est libre
         M[y] = x
         M[x] = y
-        exhaustive_rec(i + 1, G, X, M, maxCardM)
+        exhaustive_rec(i + 1, G, X, M, cardM + 1, maxCardM)
         M[y] = 0 # unmatch y
         M[x] = 0 # unmatch x
     #
     # on explore finalement l'option de laisser x libre
-    exhaustive_rec(i + 1, G, X, M, maxCardM)
+    exhaustive_rec(i + 1, G, X, M, cardM, maxCardM)
 
 # initialisation de la récursion
 def exhaustive(G, X):
   M = initVect(len(G), 0)
   maxCardM = [0]
-  exhaustive_rec(0, G, X, M, maxCardM)
+  exhaustive_rec(0, G, X, M, 0, maxCardM)
   return maxCardM[0]
 
 
@@ -465,45 +421,31 @@ def DFS_findOnePath(G,X,M):
 # ci-dessus, qui est utilisée dans l'algorithme Hopcroft-Karp.
 # Les commentaires sur le code sont donc les mêmes.
 def DFS_findOnePath_rec(v, isInX, G, M, visited):
-  verbose("visite de", v)
   visited[v] = True
   if isInX: # == v in X
-    verbose("niveau de profondeur paire")
     # il faut explorer des arêtes qui ne sont pas dans M
     for w in G[v]:
-      verbose("voisin  w =", w)
       if not visited[w]:
         # commentaire <7>
-        verbose("w est acceptable")
         if M[w] == 0:
-          verbose("w est libre: un plus court chemin d'augmentation trouvé")
           visited[w] == True
           found = True
         else:
           # récursion
-          verbose("récursion à partir de w")
           found = DFS_findOnePath_rec(w, not isInX, G, M, visited)
-          verbose("remontée: v =", v)
         if found:
           # commentaire <8>
-          verbose("Augmentation de M")
           M[v] = w
           M[w] = v
           return found
   else: # v not in X donc v in Y
-    verbose("niveau de profondeur impair")
     # commentaire <9>
     w = M[v]
-    verbose("w = M[v] =", w)
     if not visited[w]:
-      verbose("w = M[v] is acceptable, récursion")
       found = DFS_findOnePath_rec(w, not isInX, G, M, visited)
-      verbose("remontée: v =", v)
       if found:
-        verbose("chemin trouvé précédemment, augmentation passive de M")
         # commentaire <10>
         return found
-  verbose("return False: backtrack sans succès")
   return False # pas de chemin d'augmentation trouvé
 
 
@@ -520,7 +462,7 @@ def test_matchingHK(G, cardX):
   print("Taille du couplage: |M| =", cardM)
 
 
-# vérifier manuellement que les
+# vérifier manuellement (à l'oeil nu) que les
 # graphes générés aléatoirement sont
 # bien formés (pas de sommets isolés, etc)
 # et que ceux qui sont censés 
@@ -564,9 +506,18 @@ def test_simple(G, cardX):
 
 G1 = [[], [7,8,11],[7,10],[8],[9,11],[9],[9,12], # X
           [1,2],[1,3],[4,5,6],[2],[1,4],[6]] # Y
-G2 = [[], [6,7],[6,10],[8,9],[6,10],[7,9],
-          [1,2,4],[1,5],[3],[3,5],[2,4]] # example des marriages
+ # ^ graphe d'example des marriages
+ # X = {1,...,6} = {Paris,...,Rodrigue}
+ # Y = {7,...,12} = {Hélène,...,Chimène}
+
+G2 = [[], [6,7],[6,10],[8,9],[6,10],[7,9], # X
+          [1,2,4],[1,5],[3],[3,5],[2,4]] # Y
+ # ^ graphe de l'image jointe au projet
+ # X = {1,...,5} = {u0,...,u4}
+ # Y = {6,...,10} = {v0,...,v4}
+
 G3 = [[], [4], [4], [4, 5, 6], [1, 2, 3], [3], [3]]
+ # Un graphe qui ne respecte pas la condition du théorème de hall
 
 # test de Hopcroft-Karp sur G1 et G2:
 test_matchingHK(G1, 6)
