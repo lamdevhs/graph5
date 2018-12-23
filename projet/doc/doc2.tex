@@ -9,7 +9,7 @@
 
 \author{Nathanael Bayard --- L3 DLMI --- Algorithmique des Graphes}
 \title{Mini-Projet \\ Problème de Couplage (Matching)}
-\date{\today}
+\date{}
     
 \begin{document} \maketitle
 \section{Présentation du Problème et Théorème de Hall}
@@ -63,28 +63,26 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
     
     Puisque $\lam_u \subset \gam$ et idem pour $\lam_v$, alors, par construction de $\gam$, ni $\lam_u$ ni $\lam_v$ ne peuvent vérifier la condition (1), et alors :
     
-    \[ \exists B_u \subseteq X, \quad \abs{B_u} > \abs{W_u} \avec W_u := \lam_u B_u \]
-    \[ \exists B_v \subseteq X, \quad \abs{B_v} > \abs{W_v} \avec W_v := \lam_v B_v \]
+    \[ \exists B_u \subseteq X, \quad \abs{B_u} > \abs{\lam_u B_u} \]
+    \[ \exists B_v \subseteq X, \quad \abs{B_v} > \abs{\lam_v B_v} \]
     
-    Nécessairement, au vu de (2), $z$ appartient à $B_u$ et aussi à $B_v$. Définissons $B := (B_u \cap B_v) \minus \set{z}$, $N := \gam B$, et $W := W_u \cap W_v$.
+    Nécessairement, au vu de (2), $z$ appartient à $B_u$ et aussi à $B_v$. Définissons $B := (B_u \cap B_v) \minus \set{z}$, et $W := \lam_u B_u \cap \lam_v B_v$.
     
-    Soit $a \in B$. Alors $a \in B_u$ et comme $\gam a = \lam_u a$ (car $a \neq z$),
-    \[ \gam a \subseteq  \bigcup_{x \in B_u} \lam_u x = W_u \]
-    D'où $N \subseteq W_u$, et de même $N \subseteq W_v$ pour les mêmes raisons : finalement, $N \subseteq W$.
+    De par (2), on a $\gam B = \lam_u B = \lam_v B$ donc $\gam B = \lam_u B \subseteq \lam_u B_u$ et symétriquement $\gam B \subseteq \lam_v B_v$, donc finalement, $\gam B \subseteq W$.
     
     Nous aurons aussi besoin du résultat suivant :
-    \[ W_u \cup W_v = \gam (B_u \cup B_v) \tag{3} \]
-    L'inclusion $\subseteq$ est évidente du fait que $\gam$ contient $\lam_u$ et $\lam_v$. Pour l'inclusion réciproque, la seule chose à vérifier est que $u$ et $v$ soient bien dans le membre de gauche, puisqu'ils sont dans le membre de droite. Or, $u \in \lam_v z \subseteq \lam_v B_v = W_v$ puisque $z \in B_v$, et idem $v \in W_u$. D'où l'égalité (3).
+    \[ \lam_u B_u \cup \lam_v B_v = \gam (B_u \cup B_v)  \tag{3} \]
+    L'inclusion $\subseteq$ est évidente du fait que $\gam$ contient $\lam_u$ et $\lam_v$. Pour l'inclusion réciproque, la seule chose à vérifier est que $u$ et $v$ soient bien dans le membre de gauche, puisqu'ils sont dans le membre de droite. Or, $u \in \lam_v z \subseteq \lam_v B_v $ puisque $z \in B_v$, et idem $v \in \lam_u B_u$. D'où l'égalité (3).
     
     Comme $\gam$ respecte la condition de couplage, on en déduit que
-    \[ \abs{W_u \cup W_v} = \abs{\gam (B_u \cup B_v) } \geq \abs{B_u \cup B_v} \tag{4} \]
+    \[ \abs{\lam_u B_u \cup \lam_v B_v} = \abs{\gam (B_u \cup B_v) } \geq \abs{B_u \cup B_v} \tag{4} \]
     
     Finalement :
     \[ \begin{aligned}
-        \abs{N} = \abs{\gam B} &\leq \abs{W}  \car N \subseteq W \\
-        & = \abs{ W_u \cap W_v } = \abs {W_u} + \abs{W_v} - \abs{W_u \cup W_v}\\
+        \abs{\gam B} &\leq \abs{W}  \car \gam B \subseteq W \\
+        & = \abs{ \lam_u B_u \cap \lam_v B_v } = \abs {\lam_u B_u} + \abs{\lam_v B_v} - \abs{\lam_u B_u \cup \lam_v B_v}\\
         & \leq (\abs {B_u} - 1)  + (\abs{B_v} - 1) - \abs{B_u \cup B_v} \\
-        &    \qquad  \puisque \abs{W_u} < \abs{B_u} \et \abs{W_v} < \abs{B_v} \et \text{(4)} \\
+        &    \qquad  \puisque \abs{\lam_u B_u} < \abs{B_u} \et \abs{\lam_v B_v} < \abs{B_v} \et \text{(4)} \\
         & =    \abs {B_u \cap B_v} - 2 \\
         & =    \abs {(B_u \cap B_v) \minus \set{z}} - 1 \\
         & =    \abs{B} - 1
@@ -98,9 +96,9 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
     D'où $x = x'$, et $f$ est bien injective, donc bijective puisque d'après (ii), $\abs X = \abs Y$. $f$ est donc bien un couplage parfait pour $P$, ce qui achève cette démonstration.
  \qed\SEP
  
- De nombreux problèmes concrets peuvent être modélisés par un problème de couplage. L'objectif est souvent de construire une bijection $f : X \to Y$ avec des contraintes sur les valeurs que peuvent prendre $f(x)$ ou $f\-(y)$, contraintes dépendant de $x$ ou de $y$.
+ De nombreux problèmes concrets peuvent être modélisés par un problème de couplage. L'objectif est souvent de construire une bijection $f : X \to Y$, c'est-à-dire une association un-à-un entre deux ensembles, avec des contraintes sur les valeurs que peuvent prendre $f(x)$ ou $f\-(y)$, contraintes dépendant de $x$ ou de $y$.
  
- Il est à remarquer que la notion de problème de couplage symétrique par rapport à $X$ et $Y$.
+ Il est à remarquer que la notion de problème de couplage est complètement symétrique par rapport à $X$ et $Y$.
  \SEP\jdefi
     Soit $P = (X,Y,\phi)$ un problème de couplage. Alors on définit son \emph{symétrique} $P\-$ comme le problème de couplage $P\- := (Y,X,\phi\-)$, avec :
     \[\phi\- := \set{ (y,x) \in Y \times X \telq (x,y) \in \phi } \]
@@ -114,7 +112,7 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
  
  \SEP\jdefi On appelle \emph{graphe du problème de couplage} $P = (X,Y,\phi)$, le graphe non orienté, simple, biparti $G := (V, E)$, avec $V := X \cup Y$ (on supposera ici $X$ et $Y$ disjoints) et $E := \phi$ (en identifiant 2-uplets de sommets, et arêtes).
  
- Ici comme $G$ est non orienté, la notation $(x,y)$ désigne donc une arête reliant $x$ à $y$, et correspond plus rigoureusement au doubleton $\set{x,y}$.
+ Ici comme $G$ est non orienté, la notation $(x,y)$ désigne donc une arête reliant $x$ à $y$, et correspondrait plus rigoureusement au doubleton $\set{x,y}$.
  
  Un \emph{couplage} du graphe $G$ correspondra à un ensemble d'arêtes $M \subseteq E$ tel qu'il existe un couplage $f : A \subseteq X \to \Img f$ de $P$, tel que le graphe d'application $\Gam_f$ de $f$ soit $M$, c'est-à-dire :
  \[ M = \Gam_f = \set{ (x,f(x)) \pour x \in A } \]
@@ -125,7 +123,7 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
  
  Un \emph{couplage maximum} pour $G$ correspondra à un ensemble $M = \Gam_f \subseteq E$ avec $f : A \subseteq X \to \Img f$ un couplage maximum pour $P$.
  
- Cela correspond aussi exactement à un couplage $M$ pour $G$ de cardinal maximal, puisque le nombre d'arêtes dans $M$ est exactement égal à l'étendue du couplage de $P$ qui lui correspond. Un couplage maximum $M$ est donc un ensemble d'arêtes de $G$ deux à deux sommet-disjointes et qui soit maximal au sens du cardinal.
+ Cela correspond aussi exactement à un couplage $M$ pour $G$ de cardinal maximal, puisque le nombre d'arêtes dans $M$ est exactement égal à l'étendue du couplage $f$ de $P$ qui lui correspond. Un couplage maximum $M$ est donc un ensemble d'arêtes de $G$ deux à deux sommet-disjointes et qui soit maximal au sens du cardinal.
  \SEP
  
  Les graphes des problèmes $P$ et $P\-$ sont exactement égaux, et tout couplage (resp. maximum, resp. parfait) de l'un est un couplage (resp. maximum, resp. parfait) pour l'autre.
@@ -138,7 +136,7 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
  
  \SEP\jdefi Soit $G = (V = X \cup Y, E)$ le graphe d'un problème de couplage, et $M \subseteq E$ un couplage de $G$. On dit que $v \in V$ est libre par rapport à $M$ s'il est isolé dans $(V,M)$, c'est-à-dire s'il n'est pas l'extrémité d'une arête dans $M$.
  
- On dira que $C$ est un \emph{chemin d'augmentation} de $M$ dans $G$, lorsque $C$ est un chemin de $G$, simple et élémentaire, de longueur non nulle, dont les deux sommets d'extrémité sont libres par rapport à $M$, et dont la suite des arêtes traversées est en alternance dans $M$ et dans $E \minus M$.
+ On dira que $C$ est un \emph{chemin d'augmentation} de $M$ dans $G$, lorsque $C$ est un chemin de $G$, simple et élémentaire (donc non cyclique), de longueur non nulle, dont les deux sommets d'extrémités sont libres par rapport à $M$, et dont la suite des arêtes traversées est en alternance dans $M$ et dans $E \minus M$.
  \SEP
  
  Comme exemple trivial, un chemin d'augmentation ``minimaliste'' peut très bien être une unique arête dans $E\minus M$ reliant deux sommets libres.
@@ -151,35 +149,39 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
  
  Par ailleurs, $M'$ contient exactement une arête de plus que le couplage $M$. À partir du couplage trivial $M_0 = \empty$, on peut ainsi construire une suite finie $(M_0,\dots,M_s)$ de couplages de $G$ qui soit strictement croissante pour le cardinal : l'élément $M_{i+1}$ est définit comme la différence symétrique de $M_i$ avec un chemin d'augmentation pour $M_i$ dans $G$. La suite s'arête lorsqu'il ne reste plus de chemins d'augmentation à trouver pour le dernier élément de la suite.
  
- Afin de prouver que le dernier couplage $M_s$ de la suite, obtenu selon cette méthode des chemins d'augmentation, est un couplage maximum de $G$, (c'est-à-dire que pour tout autre couplage $M$ de $G$, on aurait $\abs{M_s} \geq \abs M$), nous avons le théorème suivant.
+ Afin de prouver que le dernier couplage $M_s$ de cette suite, obtenu selon cette méthode des chemins d'augmentation, est un couplage maximum de $G$, (c'est-à-dire que pour tout autre couplage $M$ de $G$, on aurait $\abs{M} \leq \abs {M_s}$), nous avons le théorème suivant.
  
  \SEP\jtheoz{Berge 1957}
     Un couplage $M$ est maximum si et seulement si $G$ ne contient pas de chemins d'augmentation pour $M$.
  \SEP\jpreuve
     Comme montré précédemment, s'il existe un chemin d'augmentation $C$ pour $M$, alors $C \oplus M$ est un couplage contenant une arête de plus que $M$, ce qui implique que $M$ ne peut être maximum.
     
-    Réciproquement, supposons $M$ non maximum. Soit $M\sun$ un couplage maximum dans $G$. On doit donc avoir $\lam := \abs {M\sun} - \abs M > 0$. Définissons $S := M \oplus M\sun$. $S$ est l'ensemble des arêtes qui ne sont pas communes à $M$ et $M\sun$ : c'est l'union disjointe de $S \cap M\sun = M\sun \minus M$ et $S \cap M = M \minus M\sun$, et on doit avoir $\abs{M\sun \minus M} = \abs{M \minus M\sun}+\lam$.
+    Réciproquement, supposons $M$ non maximum. Soit $M\sun$ un couplage maximum dans $G$, qui existe forcément puisque $X$ et $Y$ sont finis. On doit donc avoir $\lam := \abs {M\sun} - \abs M > 0$. Définissons $S := M \oplus M\sun$.
+    
+    $S$ est l'ensemble des arêtes qui ne sont pas communes à $M$ et $M\sun$ : c'est l'union disjointe de $S \cap M\sun = M\sun \minus M$ et $S \cap M = M \minus M\sun$, et on doit avoir $\abs{M\sun \minus M} = \abs{M \minus M\sun}+\lam$ : il doit donc y avoir $\lam$ arêtes de plus dans $S$ qui proviennent de $M\sun$ que d'arêtes provenant de $M$.
     
     Soit $x \in V$. Dans le graphe partiel $(V, S)$, si $x$ est l'extrémité d'une arête de $M$, alors il ne peut être l'extrémité d'une autre arête de $M$, puisque $M$ est un couplage. De la même façon, $x$ est l'extrémité d'au plus une arête de $M\sun$. Par suite, tous les sommets de $(V,S)$ sont de degré inférieurs ou égaux à 2.
     
     On en déduit que $S$ contient un ensemble de cycles et de chemins élémentaires maximaux de $G$ (que l'on ne peut pas prolonger dans $S$) deux à deux sommet-disjoints, et où il y a toujours alternance entre une arête de $M$ et une arête de $M\sun$ dans chacun de ces cycles et chemins.
     
-    Les cycles sont donc tous de longueur paire, et contiendront aussi autant d'arêtes de $M$ que d'arêtes de $M\sun$. De même, tout chemin maximal de $S$ de longueur paire contiendra autant d'arêtes de $M$ que d'arêtes de $M\sun$.
+    Les cycles sont donc tous de longueur paire, et contiendront autant d'arêtes de $M$ que d'arêtes de $M\sun$. De même, tout chemin maximal de $S$ de longueur paire contiendra autant d'arêtes de $M$ que d'arêtes de $M\sun$.
     
     Comme il est supposé y avoir $\lam$ arêtes de plus dans $S \cap M\sun$ que dans $S \cap M$, cela implique forcément qu'il existe dans $S$ au moins un chemin $C$ ayant plus d'arêtes provenant de $M\sun$ que d'arêtes provenant de $M$. Un tel chemin est alors de longueur impaire, començant et se terminant par deux arêtes de $M\sun \minus M$, donc par deux sommets libres par rapport à $M$, car si les extrémités de $C$ n'étaient pas libre pour $M$, le chemin $C$ pourrait être prolongé d'au moins une arête, et ne serait donc pas maximal (ou bien ce serait un cycle, ce qui a déjà été exclus). Par suite, $C$ est un chemin d'augmentation pour $M$ dans $G$, ce qui achève la preuve de la réciproque.
     
-    Précisons un point qui sera utile pour prouver le théorème qui va suivre : il n'existe aucun chemin maximal dans $S$ contenant moins d'arêtes de $M\sun$ que d'arêtes de $M$ : si un tel chemin existait, ce serait un chemin d'augmentation pour $M\sun$, ce qui est impossible du fait que $M\sun$ est un couplage maximum pour $G$.
+    Précisons un point qui sera utile pour prouver le théorème qui va suivre : il n'existe aucun chemin maximal dans $S$ contenant strictement moins d'arêtes de $M\sun$ que d'arêtes de $M$ : si un tel chemin existait, ce serait un chemin d'augmentation pour $M\sun$, ce qui est impossible du fait que $M\sun$ est un couplage maximum pour $G$.
  \qed\SEP
- \jtheoz{Hopcroft-Karp} On reprend les hypothèses et notations du théorème précédent. Alors, il existe, dans $S = M\sun \oplus M$, exactement $\lam = \abs {M\sun} - \abs M > 0$ chemins d'augmentation pour $M$ qui soient deux-à-deux sommet-disjoints.
+ 
+ Le théorème suivant sera important pour prouver la complexité de l'algorithme que nous allons décrire plus bas.
+ \SEP\jtheoz{Hopcroft-Karp} On reprend les hypothèses et notations du théorème précédent. Alors, il existe, dans $S = M\sun \oplus M$, exactement $\lam = \abs {M\sun} - \abs M > 0$ chemins d'augmentation pour $M$ qui soient deux-à-deux sommet-disjoints.
  \SEP\jpreuve
     Il suffit de voir que chaque chemin d'augmentation pour $M$ dans $S$ contient exactement une arête de plus provenant de $M\sun$, que d'arêtes provenant de $M$. Il existe donc nécessairement $\lam$ chemins d'augmentation disjoints dans $S$ pour justifier que $M\sun$ contienne $\lam$ arêtes de plus que $M$, tout cela en tenant compte que, comme montré précédemment, les chemins d'augmentation pour $M$ sont les seules parties de $S$ qui influent sur la différence de taille entre $M$ et $M\sun$.
  \qed \SEP
  
- Par application du théorème précédent, $M_s$ étant le dernier couplage de la suite, comme aucun chemin d'augmentation n'existe pour celui-ci, $M_s$ est donc nécessairement un couplage maximum. Cela achève la preuve de la validité de la méthode de résolution du problème de couplage maximum par chemins d'augmentation.
+ Par application du théorème de Berge, $M_s$ étant le dernier couplage de la suite, comme aucun chemin d'augmentation n'existe pour celui-ci, $M_s$ est donc nécessairement un couplage maximum. Cela achève la preuve de la validité de l'algorithme de résolution du problème de couplage maximum par chemins d'augmentation.
  
  \subsection{L'algorithme}
  
- On améliore l'algorithme esquissé précédemment de la manière suivante : au lieu d'utiliser un seul chemin d'augmentation quelconque à chaque étape, on récupère un ensemble maximal $K$ aussi grand que possible de chemins d'augmentation de $M$ qui soient tous de la longueur $k$ la plus courte possible, et deux à deux sommet-disjoints. On utilise alors chaque élément de $K$ pour augmenter $M$.
+ On améliore l'algorithme esquissé précédemment de la manière suivante : au lieu d'utiliser un seul chemin d'augmentation quelconque à chaque étape, on récupère un ensemble maximal $K$ aussi grand que possible de chemins d'augmentation de $M$ qui soient tous de la même longueur $k$ la plus courte possible pour un chemin d'augmentation, et deux à deux sommet-disjoints. On utilise alors chaque élément de $K$ pour augmenter $M$.
  
  A noter que $K$ n'a besoin d'être \emph{maximal} que au sens de l'inclusion, et non pas \emph{maximum} au sens du cardinal, ce qui serait autrement plus dur à construire. Concrètement, s'il n'existe pas d'autre chemin de longueur $k$ et deux à deux sommet-disjoint de tous les éléments de $K$, alors on considèrera que $K$ est maximal.
  
@@ -205,7 +207,7 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
     
     \hspace{2em}  \code{// et $K$ est maximal au sens de l'inclusion.}
     
-    \hspace{2em} $ M \leftarrow M \oplus \bigcup_{C \in K} C = (((M \oplus C_1) \oplus C_2) \cdots ) \oplus C_n$
+    \hspace{2em} $ M \leftarrow M \oplus \biguplus_{C \in K} C = (((M \oplus C_1) \oplus C_2) \cdots ) \oplus C_n$
     
     \code{\} Tant que $K \neq \empty$.} \code{// tant qu'il reste des chemins d'augmentation à trouver}
     
@@ -214,23 +216,24 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
  
   \subsection{Mise en Œuvre Concrète}
  
- On divise le travail de la construction progressive du couplage $M$, en \emph{étapes}, toutes identiques, et qui ne s'arrêtent que lorsqu'il n'y a plus rien à faire. Chaque étape construit $K$ et utilise ses éléments pour augmenter $M$. Une étape correspond en fait à un passage dans la boucle \code{tant que ... faire} du pseudo-code ci-dessus. À chaque étape, il y a deux phases. Définissons $L \subseteq X$ l'ensemble des sommets de $X$ libres pour le couplage $M$.
+ On divise le travail de la construction progressive du couplage $M$, en \emph{étapes}, toutes identiques. Chaque étape construit $K$ et utilise ses éléments pour augmenter $M$. Une étape correspond en fait à un passage dans la boucle \code{tant que ... faire} du pseudo-code ci-dessus. À chaque étape, il y a deux phases. Définissons $L \subseteq X$ l'ensemble des sommets de $X$ libres pour le couplage $M$. \medskip
  
- La phase \#1 consiste à récupérer la longueur $k$ du plus petit chemin d'augmentation que l'on puisse trouver pour $M$ dans $G$. Cela se fait par un parcours en largeur qui commence par traiter tous les sommets de $L$, puis qui se poursuit en suivant la règle que les arêtes explorées doivent être dans $M$ et dans $E \minus M$ en alternance. En fait, comme toutes les arêtes du niveau $0$ sont dans $E\minus M$ (car toutes les racines $L$ du parcours sont libres pour $M$), chaque niveau de profondeur du parcours est intégralement inclus dans $M$, puis dans $E \minus M$, en alternance.
+ La phase \#1 consiste à récupérer la longueur $k$ du plus petit chemin d'augmentation que l'on puisse trouver pour $M$ dans $G$. Cela se fait par un parcours en largeur qui commence par traiter tous les sommets de $L$, puis qui se poursuit en suivant la règle que les arêtes explorées doivent être dans $M$ et dans $E \minus M$ en alternance. En fait, comme toutes les arêtes du niveau $0$ sont dans $E\minus M$ (car toutes les racines $L$ du parcours sont libres pour $M$), chaque niveau de profondeur du parcours est intégralement inclus dans $M$, puis dans $E \minus M$, puis dans $M$, et ainsi de suite en alternance.
  
- On explore donc le graphe $G$ en s'arrêtant à la profondeur $k$, c'est-à-dire à la profondeur où on trouve le premier sommet libre de $Y$, donc où l'on trouve le plus petit chemin d'augmentation pour $M$ dans $G$. Cependant on ne s'arrête pas avant d'avoir traité tous les sommets à cette profondeur. Lors de ce parcours largeur, on mémorise aussi, pour chaque sommet $s$ visité, la profondeur $p(s)$ à laquelle on l'a visité. On interdit bien sûr les revisites, car les chemins d'augmentations sont élémentaires.
+ On explore donc le graphe $G$ en s'arrêtant à la profondeur $k$, c'est-à-dire à la profondeur où l'on trouve le plus petit chemin d'augmentation pour $M$ dans $G$, donc là où on rencontre le premier sommet de $Y$ qui soit libre pour 
+ $M$. Cependant on ne s'arrête pas avant d'avoir traité tous les sommets à cette profondeur. Lors de ce parcours largeur, on mémorise aussi, pour chaque sommet $s$ visité, la profondeur $p(s)$ à laquelle on l'a visité. On interdit bien sûr les revisites, car les chemins d'augmentations sont élémentaires. \medskip
 
- La phase \#2 consiste en la recherche des éléments de $K$, et leur utilisation pour augmenter $M$. Chaque élément de $K$ peut être trouvé par un parcours en profondeur de $G$ à partir d'un sommet de $L$ particulier, qui sera l'une de ses extrémités. Durant chacun de ces parcours, on alterne bien sûr la traversée d'arêtes dans $M$ et dans $E\minus M$. On s'arrange également pour que tout sommet $v$ visité \emph{à partir} d'un sommet $s$ soit de profondeur $p(v) = p(s) + 1$ (telle que mesurée durant la phase \#1), ce qui nous assure de trouver le chemin le plus court possible (de longueur $k$). On interdit de plus la revisite d'un sommet de $G$ durant toute la phase \#2 : cela nous assure que les chemins de $K$ trouvés sont bien deux à deux sommet-disjoints.
+ La phase \#2 consiste en la recherche des éléments de $K$, et leur utilisation pour augmenter $M$. Chaque élément de $K$ peut être trouvé par un parcours en profondeur de $G$ à partir d'un sommet de $L$ particulier, qui sera l'une de ses extrémités. Durant chacun de ces parcours, on alterne bien sûr la traversée d'arêtes dans $M$ et dans $E\minus M$. On s'arrange également pour que tout sommet $v$ visité \emph{à partir} d'un sommet $s$ soit de profondeur $p(v) = p(s) + 1$ (telle que mesurée durant la phase \#1), ce qui nous assure de trouver un chemin le plus court possible (de longueur $k$). On interdit de plus la revisite d'un sommet de $G$ durant toute la phase \#2 : cela nous assure que les chemins de $K$ trouvés sont bien deux à deux sommet-disjoints.
  
- C'est un choix justifié du fait que si un sommet $v$ est visité par un parcours profondeur à partir d'un certain sommet libre de $X$, mais si $v$ n'est pas retenu pour faire partie d'un chemin de $K$, alors les autres parcours le rejetteront tout autant, car il ne permet pas, à sa profondeur $p(v)$, de rejoindre un élément libre de $Y$ de manière compatible avec un chemin d'augmentation de $M$ de longueur $k$.
+ C'est un choix justifié du fait que si un sommet $v$ est visité par un parcours profondeur à partir d'un certain sommet libre de $X$, mais si $v$ n'est pas retenu pour faire partie d'un chemin de $K$, alors les autres parcours le rejetteront tout autant, car il ne permet pas, à sa profondeur $p(v)$, de rejoindre un élément libre de $Y$ de manière compatible avec la définition d'un chemin d'augmentation de $M$ de longueur $k$.
  
- L'augmentation de $M$ en utilisant chacun des chemins de $K$ se fait à la volée durant la remontée de chaque parcours en profondeur qui a trouvé le chemin en question.
+ L'augmentation de $M$ en utilisant chacun des chemins de $K$ se fait à la volée durant la remontée de chaque parcours en profondeur qui a permis trouvé le chemin en question.
 
  \subsection{Complexité}
  
-  La complexité maximale de chaque phase \#1 et \#2, est donc la somme de celle d'un parcours largeur et d'un parcours profondeur, tous deux généralisés -- l'absence de revisites durant chaque phase justifiant cette évaluation. Chaque étape de l'algorithme a donc une complexité temporelle qui se mesure donc en $O(2(n+m)) = O(n + m)$.
+  La complexité de chaque phase \#1 et \#2, est donc la somme de la complexité d'un parcours largeur et d'un parcours profondeur, tous deux généralisés -- l'absence de revisites durant chaque phase justifiant cette évaluation. Chaque étape de l'algorithme a donc une complexité temporelle qui se mesure donc en $O(2(n+m)) = O(n + m)$.
  
- Comme le graphe est biparti toutes les arêtes partent de $X$ et atterrissent dans $Y$ donc on a finalement
+ Comme le graphe $G$ est biparti, toutes les arêtes de $G$ sont dans $X \times Y$ donc on a finalement
  \[ m \leq \abs {X \times  Y} = \abs X \times \abs Y \leq \paren{\dfrac n 2}^2 = \dfrac {n^2} 4 \]
  du fait que $n = \abs X + \abs Y$ et que l'on a, pour tous $x,y \in \R$,
  \[0 \leq (x - y)^2  = (x + y)^2 - 4xy \donc xy \leq \frac{(x + y)^2}{4} \]
@@ -240,7 +243,7 @@ Tout couplage parfait est bien sûr maximum, mais la réciproque n'est à priori
  
  Après l'étape $\sqrt n$, tous les chemins d'augmentation que l'on peut trouver seront donc de longueur au moins égale à $\sqrt n$. Soit $M$ le couplage obtenu à ce moment-là de l'algorithme, $M\sun$ un couplage maximum pour $G$, et $S := M \oplus M\sun$.
  
- $S$ contient entre autres un certain nombre de chemins d'augmentation de $M$, donc nécessairement tous de longueur supérieure ou égale à $\sqrt n$. Comme ils sont deux-à-deux sommet-disjoints (\cf le théorème de Berges), chaque chemin d'augmentation passe par un peu plus de $\sqrt n$ sommets qu'il ne partage pas avec les autres chemins dans $S$, et alors il ne peut donc y avoir plus de $\sqrt n$ chemins d'augmentation distincts dans $S$, puisque le nombre total de sommets disponibles est limité à $n$.
+ $S$ contient entre autres un certain nombre de chemins d'augmentation de $M$, donc nécessairement tous de longueur supérieure ou égale à $\sqrt n$. Comme ils sont deux-à-deux sommet-disjoints (\cf le théorème de Berges), chaque chemin d'augmentation passe par un peu plus de $\sqrt n$ sommets qu'il ne partage pas avec les autres chemins d'augmentation de $M$ dans $S$, et alors il ne peut donc y avoir davantage que $\sqrt n$ chemins d'augmentation distincts dans $S$, puisque le nombre total de sommets disponibles est limité à $n$.
  
  D'après le théorème de Hopcroft-Karp, le nombre de chemins d'augmentation dans $S$ est égal à la différence $\abs {M\sun} - \abs M$. D'où ici, $\abs {M\sun} - \abs M \leq \sqrt n$. Comme chaque étape de l'algorithme trouve au moins un chemin d'augmentation, à chaque étape $M$ croît en cardinal par au moins 1. Par suite, à l'étape $2 \sqrt n$ (ou avant si l'algorithme termine plus tôt), on a forcément $\abs M = \abs {M\sun}$, et $M$ est donc un couplage maximum, comme recherché.
  
